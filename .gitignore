@@ -1,0 +1,44 @@
+# Xcode
+#
+xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# SwiftPM
+#
+# Packages/
+# Package.pins
+# Package.resolved
+# *.xcodeproj
+# .swiftpm
+.build/
+
+# CocoaPods
+#
+Pods/
+*.xcworkspace
+
+# Carthage
+#
+# Carthage/Checkouts
+Carthage/Build/
+
+# fastlane
+#
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+#
+iOSInjectionProject/
+
+# R.swift
+#
+*.generated.swift
+
+# GoogleService
+#
+GoogleService-Info.plist
