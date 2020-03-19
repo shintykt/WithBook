@@ -46,6 +46,14 @@ final class BookEditViewController: UIViewController {
 
 private extension BookEditViewController {
     func setUpUI() {
+        let backgroundTap = UITapGestureRecognizer()
+        backgroundTap.rx.event
+            .subscribe { [weak self] _ in
+                self?.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+        view.addGestureRecognizer(backgroundTap)
+        
         guard case .replacing(let book) = viewModel.mode else { return }
         titleTextField.text = book.title
         authorTextField.text = book.author

@@ -47,6 +47,14 @@ final class MemoEditViewController: UIViewController {
 
 private extension MemoEditViewController {
     func setUpUI() {
+        let backgroundTap = UITapGestureRecognizer()
+        backgroundTap.rx.event
+            .subscribe { [weak self] _ in
+                self?.view.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+        view.addGestureRecognizer(backgroundTap)
+        
         guard case .replacing(let memo) = viewModel.mode else { return }
         titleTextField.text = memo.title
         textView.text = memo.text
