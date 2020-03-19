@@ -84,7 +84,8 @@ extension User {
     func replace(_ memo: Memo, about book: Book) {
         guard let targetBookIndex = books?.firstIndex(where: { $0.id == book.id }) else { return }
         let targetBook = books?[targetBookIndex]
-        guard let targetMemoIndex = targetBook?.memos?.firstIndex(where: { $0.id == book.id }) else { return }
+        guard let targetMemoIndex = targetBook?.memos?.firstIndex(where: { $0.id == memo.id }) else { return }
+        memo.updateDate = Date()
         targetBook?.memos?[targetMemoIndex] = memo
     }
 }
