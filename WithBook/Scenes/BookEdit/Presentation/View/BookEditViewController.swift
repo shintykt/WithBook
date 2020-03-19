@@ -46,6 +46,14 @@ final class BookEditViewController: UIViewController {
 
 private extension BookEditViewController {
     func setUpUI() {
+        let cancelButton = UIBarButtonItem(title: "キャンセル", style: .plain, target: self, action: nil)
+        navigationItem.setLeftBarButton(cancelButton, animated: true)
+        cancelButton.rx.tap
+            .subscribe { [weak self] _ in
+                self?.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
