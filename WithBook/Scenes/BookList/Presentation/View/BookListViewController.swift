@@ -55,7 +55,8 @@ private extension BookListViewController {
             .subscribe { [weak self] _ in
                 let bookEditViewController = BookEditViewControllerFactory.create(for: .adding)
                 bookEditViewController.delegate = self
-                self?.present(bookEditViewController, animated: true)
+                let navigationController = UINavigationController(rootViewController: bookEditViewController)
+                self?.present(navigationController, animated: true)
             }
             .disposed(by: disposeBag)
 
@@ -75,7 +76,8 @@ private extension BookListViewController {
                 let replaceAction = UIAlertAction(title: "ブックを編集する", style: .default) { _ in
                     let bookEditViewController = BookEditViewControllerFactory.create(for: .replacing(item.book))
                     bookEditViewController.delegate = self
-                    self?.present(bookEditViewController, animated: true)
+                    let navigationController = UINavigationController(rootViewController: bookEditViewController)
+                    self?.present(navigationController, animated: true)
                 }
                 let removeAction = UIAlertAction(title: "ブックを削除する", style: .default) { _ in
                     self?.viewModel.remove(item)
