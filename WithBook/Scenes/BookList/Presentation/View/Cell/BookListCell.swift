@@ -23,20 +23,14 @@ final class BookListCell: UICollectionViewCell {
         loadNib()
     }
     
-    private func loadNib() {
-        let view = R.nib.bookListCell(owner: self)!
-        addSubview(view)
-        setUpUI()
-    }
-    
     func inject(_ book: Book) {
         imageView.image = book.image
         titleLabel.text = book.title
         authorLabel.text = book.author
     }
     
-    private func setUpUI() {
-        layer.borderWidth = 1.0
-        layer.borderColor = UIColor.black.cgColor
+    private func loadNib() {
+        let view = R.nib.bookListCell(owner: self)!
+        addSubview(view)
     }
 }
