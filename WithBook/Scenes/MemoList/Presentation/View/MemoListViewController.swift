@@ -50,7 +50,8 @@ private extension MemoListViewController {
                 guard let book = self?.book else { return }
                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .adding)
                 memoEditViewController.delegate = self
-                self?.present(memoEditViewController, animated: true)
+                let navigationController = UINavigationController(rootViewController: memoEditViewController)
+                self?.present(navigationController, animated: true)
             }
             .disposed(by: disposeBag)
     }
@@ -74,7 +75,8 @@ private extension MemoListViewController {
                                 guard let book = self?.book else { return }
                                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .replacing(memo))
                                 memoEditViewController.delegate = self
-                                self?.present(memoEditViewController, animated: true)
+                                let navigationController = UINavigationController(rootViewController: memoEditViewController)
+                                self?.present(navigationController, animated: true)
                             }
                             let removeAction = UIAlertAction(title: "メモを削除する", style: .default) { _ in
                                 self?.viewModel.remove(memo)
