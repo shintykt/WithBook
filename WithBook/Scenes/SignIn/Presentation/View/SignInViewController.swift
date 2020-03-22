@@ -6,8 +6,10 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
+import FirebaseAuth
 import RxCocoa
 import RxSwift
+import SVProgressHUD
 import UIKit
 
 final class SignInViewController: UIViewController {
@@ -37,8 +39,29 @@ private extension SignInViewController {
         
         signInButton.rx.tap
             .subscribe { [weak self] _ in
-                let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
-                self?.navigationController?.pushViewController(bookListViewController, animated: true)
+                SVProgressHUD.show()
+                guard let strongSelf = self else { return }
+                Auth.auth().signIn(
+                    withEmail: strongSelf.idTextField.text!,
+                    password: strongSelf.passwordTextField.text!
+                ) { authResult, error in
+                    defer { SVProgressHUD.dismiss() }
+                    
+                    if let error = error {
+                        print(error)
+                    }
+                    
+                    guard authResult?.user != nil else {
+                        let alert = UIAlertController(title: "メールアドレスまたはパスワードが違います", message: nil, preferredStyle: .alert)
+                        let closeAction = UIAlertAction(title: "閉じる", style: .default)
+                        alert.addAction(closeAction)
+                        strongSelf.present(alert, animated: true)
+                        return
+                    }
+                    // TODO: uidにひもづいたBookを取得
+                    let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
+                    strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
+                }
             }
             .disposed(by: disposeBag)
         
