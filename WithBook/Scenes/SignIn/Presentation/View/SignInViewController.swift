@@ -47,7 +47,13 @@ private extension SignInViewController {
                         print(error)
                     }
                     
-                    guard authResult?.user != nil else { return }
+                    guard authResult?.user != nil else {
+                        let alert = UIAlertController(title: "メールアドレスまたはパスワードが違います", message: nil, preferredStyle: .alert)
+                        let closeAction = UIAlertAction(title: "閉じる", style: .default)
+                        alert.addAction(closeAction)
+                        strongSelf.present(alert, animated: true)
+                        return
+                    }
                     // TODO: uidにひもづいたBookを取得
                     let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
                     strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
