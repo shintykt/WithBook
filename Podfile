@@ -7,6 +7,7 @@ def install_pods
   pod 'R.swift', '5.1.0'
   pod 'RxDataSources', '4.0.1'
   pod 'Firebase/Analytics'
+  pod 'Firebase/Auth'
 end
 
 target 'WithBook-Development' do

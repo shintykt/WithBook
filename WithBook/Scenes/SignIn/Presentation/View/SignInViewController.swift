@@ -6,6 +6,7 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
+import FirebaseAuth
 import RxCocoa
 import RxSwift
 import UIKit
@@ -37,8 +38,20 @@ private extension SignInViewController {
         
         signInButton.rx.tap
             .subscribe { [weak self] _ in
-                let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
-                self?.navigationController?.pushViewController(bookListViewController, animated: true)
+                guard let strongSelf = self else { return }
+                Auth.auth().signIn(
+                    withEmail: strongSelf.idTextField.text!,
+                    password: strongSelf.passwordTextField.text!
+                ) { authResult, error in
+                    if let error = error {
+                        print(error)
+                    }
+                    
+                    guard authResult?.user != nil else { return }
+                    // TODO: uidにひもづいたBookを取得
+                    let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
+                    strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
+                }
             }
             .disposed(by: disposeBag)
         
