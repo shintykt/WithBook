@@ -9,6 +9,7 @@
 import FirebaseAuth
 import RxCocoa
 import RxSwift
+import SVProgressHUD
 import UIKit
 
 final class SignInViewController: UIViewController {
@@ -38,11 +39,14 @@ private extension SignInViewController {
         
         signInButton.rx.tap
             .subscribe { [weak self] _ in
+                SVProgressHUD.show()
                 guard let strongSelf = self else { return }
                 Auth.auth().signIn(
                     withEmail: strongSelf.idTextField.text!,
                     password: strongSelf.passwordTextField.text!
                 ) { authResult, error in
+                    defer { SVProgressHUD.dismiss() }
+                    
                     if let error = error {
                         print(error)
                     }

@@ -8,6 +8,7 @@ def install_pods
   pod 'RxCocoa', '5.0.1'
   pod 'RxDataSources', '4.0.1'
   pod 'RxSwift', '5.0.1'
+  pod 'SVProgressHUD', '2.2.5'
 end
 
 target 'WithBook-Development' do
