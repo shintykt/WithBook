@@ -14,14 +14,15 @@ protocol BookList {
 }
 
 struct BookListModel: BookList {
+    private let user: User = .shared
+    
     func fetchBooks(completion: @escaping ([Book]) -> Void) {
-        User.shared.fetchBooks { books in
-        guard let books = books else { return }
+        user.fetchBooks { books in
             completion(books)
         }
     }
     
     func remove(_ book: Book) {
-        User.shared.remove(book)
+        user.remove(book)
     }
 }

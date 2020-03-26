@@ -15,15 +15,15 @@ protocol MemoList {
 
 struct MemoListModel: MemoList {
     let book: Book
+    private let user: User = .shared
     
     func fetchMemos(completion: @escaping ([Memo]) -> Void) {
-        User.shared.fetchMemos(about: book) { memos in
-            guard let memos = memos else { return }
+        user.fetchMemos(about: book) { memos in
             completion(memos)
         }
     }
     
     func remove(_ memo: Memo) {
-        User.shared.remove(memo, about: book)
+        user.remove(memo, about: book)
     }
 }
