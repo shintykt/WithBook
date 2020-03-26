@@ -6,6 +6,7 @@ def install_pods
   pod 'Firebase/Auth'
   pod 'Firebase/Core'
   pod 'Firebase/Firestore'
+  pod "Firebase/Storage"
   pod 'R.swift', '5.1.0'
   pod 'RxCocoa', '5.0.1'
   pod 'RxDataSources', '4.0.1'
