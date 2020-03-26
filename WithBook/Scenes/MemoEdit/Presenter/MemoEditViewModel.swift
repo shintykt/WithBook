@@ -25,7 +25,7 @@ final class MemoEditViewModel {
         self.model = model
         self.mode = mode
         switch mode {
-        case .adding: memo = Memo(title: "", text: nil, image: nil, pages: nil)
+        case .adding: memo = Memo(title: "")
         case .replacing(let memo): self.memo = memo
         }
     }
@@ -53,7 +53,7 @@ extension MemoEditViewModel: ViewModel {
         
         input.text
             .drive(onNext: { [weak self] text in
-                self?.memo.text = text
+                self?.memo.text = text ?? Const.defaultText
             })
             .disposed(by: disposeBag)
             

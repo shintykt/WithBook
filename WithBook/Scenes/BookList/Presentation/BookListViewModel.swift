@@ -23,10 +23,11 @@ final class BookListViewModel {
     }
     
     func fetchBooks() {
-        guard let books = model.fetchBooks() else { return }
-        let items = books.map { BookListSectionItem(book: $0) }
-        let sectionModel = BookListSectionModel(model: .normal, items: items)
-        booksRelay.accept([sectionModel])
+        model.fetchBooks { [weak self] books in
+            let items = books.map { BookListSectionItem(book: $0) }
+            let sectionModel = BookListSectionModel(model: .normal, items: items)
+            self?.booksRelay.accept([sectionModel])
+        }
     }
     
     func remove(_ book: BookListSectionItem) {

@@ -9,18 +9,21 @@
 import Foundation
 
 protocol MemoList {
-    func fetchMemos() -> [Memo]?
+    func fetchMemos(completion: @escaping ([Memo]) -> Void)
     func remove(_ memo: Memo)
 }
 
 struct MemoListModel: MemoList {
     let book: Book
+    private let user: User = .shared
     
-    func fetchMemos() -> [Memo]? {
-        return User.shared.fetchMemos(about: book)
+    func fetchMemos(completion: @escaping ([Memo]) -> Void) {
+        user.fetchMemos(about: book) { memos in
+            completion(memos)
+        }
     }
     
     func remove(_ memo: Memo) {
-        User.shared.remove(memo, about: book)
+        user.remove(memo, about: book)
     }
 }

@@ -13,16 +13,25 @@ final class Memo {
     let createDate: Date
     var updateDate: Date?
     var title: String
-    var image: UIImage?
-    var text: String?
+    var image: UIImage
+    var text: String
     var pages: [Int]?
     
-    init(title: String, text: String?, image: UIImage?, pages: [Int]?) {
-        id = UUID().uuidString
-        createDate = Date()
+    init(
+        id: String = UUID().uuidString,
+        createDate: Date = Date(),
+        updateDate: Date? = nil,
+        title: String,
+        text: String = Const.defaultText,
+        image: UIImage = Const.defaultImage,
+        pages: [Int]? = nil
+    ) {
+        self.id = id
+        self.createDate = createDate
+        self.updateDate = updateDate
         self.title = title
-        self.text = !(text?.isEmpty ?? true) ? text : Const.defaultText
-        self.image = image != nil ? image : Const.defaultImage
+        self.text = text
+        self.image = image
         self.pages = pages
     }
 }

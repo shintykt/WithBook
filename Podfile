@@ -4,6 +4,8 @@ use_frameworks!
 def install_pods
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
+  pod 'Firebase/Core'
+  pod 'Firebase/Firestore'
   pod 'R.swift', '5.1.0'
   pod 'RxCocoa', '5.0.1'
   pod 'RxDataSources', '4.0.1'

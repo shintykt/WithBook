@@ -11,14 +11,19 @@ import UIKit
 final class Book {
     let id: String
     var title: String
-    var author: String?
-    var image: UIImage?
+    var author: String
+    var image: UIImage
     var memos: [Memo]? = []
     
-    init(title: String, author: String?, image: UIImage?) {
-        id = UUID().uuidString
+    init(
+        id: String = UUID().uuidString,
+        title: String,
+        author: String = Const.defaultText,
+        image: UIImage = Const.defaultImage
+    ) {
+        self.id = id
         self.title = title
-        self.author = !(author?.isEmpty ?? true) ? author : Const.defaultText
-        self.image = image != nil ? image : Const.defaultImage
+        self.author = author
+        self.image = image
     }
 }
