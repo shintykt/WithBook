@@ -6,6 +6,7 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
+import Firebase
 import RxSwift
 
 final class User {
@@ -13,7 +14,6 @@ final class User {
     
     private var name = ""
     private var password = ""
-    private var books: [Book]? = []
     
     private init() {}
 }
@@ -42,50 +42,121 @@ extension User {
 // MARK: - ブック操作
 
 extension User {
-    func fetchBooks() -> [Book]? {
-        return books
+    func fetchBooks(completion: @escaping ([Book]?) -> Void) {
+        booksCollection?.getDocuments(completion: { snapshot, error in
+            if let error = error { print(error) }
+            completion(snapshot?.documents.map {
+                let data = $0.data()
+                return Book(
+                    id: $0.documentID,
+                    title: data["title"] as! String,
+                    author: data["author"] as! String
+                )
+            })
+        })
     }
     
     func add(_ book: Book) {
-        books?.append(book)
-    }
-    
-    func remove(_ book: Book) {
-        books?.removeAll(where: { $0.id == book.id })
+        addFirestore(for: book)
     }
     
     func replace(_ book: Book) {
-        guard let targetIndex = books?.firstIndex(where: { $0.id == book.id }) else { return }
-        books?[targetIndex] = book
+        replaceFirestore(for: book)
+    }
+    
+    func remove(_ book: Book) {
+        booksCollection?.document(book.id).delete { error in
+            if let error = error { print(error) }
+        }
+    }
+}
+
+private extension User {
+    var booksCollection: CollectionReference? {
+        guard let user = Auth.auth().currentUser else { return nil }
+        return Firestore.firestore().collection("users").document(user.uid).collection("books")
+    }
+    
+    func addFirestore(for book: Book) {
+        updateFirestore(for: book)
+    }
+    
+    func replaceFirestore(for book: Book) {
+        updateFirestore(for: book)
+    }
+    
+    func updateFirestore(for book: Book) {
+        let docData = [
+            "title": book.title,
+            "author": book.author
+        ]
+        booksCollection?.document(book.id).setData(docData) { error in
+            if let error = error { print(error) }
+        }
     }
 }
 
 // MARK: - メモ操作
 
 extension User {
-    func fetchMemos(about book: Book) -> [Memo]? {
-        guard let targetIndex = books?.firstIndex(where: { $0.id == book.id }) else { return book.memos }
-        let targetBook = books?[targetIndex]
-        return targetBook?.memos
+    func fetchMemos(about book: Book, completion: @escaping ([Memo]?) -> Void) {
+        memosCollection(for: book)?.getDocuments(completion: { snapshot, error in
+            if let error = error { print(error) }
+            completion(snapshot?.documents.map {
+                let data = $0.data()
+                let createTimeStamp = data["create_date"] as! Timestamp
+                let updateTimeStamp = data["update_date"] as? Timestamp
+                return Memo(
+                    id: $0.documentID,
+                    createDate: createTimeStamp.dateValue(),
+                    updateDate: updateTimeStamp?.dateValue(),
+                    title: data["title"] as! String,
+                    text: data["text"] as! String
+                )
+            })
+        })
     }
     
     func add(_ memo: Memo, about book: Book) {
-        guard let targetIndex = books?.firstIndex(where: { $0.id == book.id }) else { return }
-        let targetBook = books?[targetIndex]
-        targetBook?.memos?.append(memo)
-    }
-    
-    func remove(_ memo: Memo, about book: Book) {
-        guard let targetIndex = books?.firstIndex(where: { $0.id == book.id }) else { return }
-        let targetBook = books?[targetIndex]
-        targetBook?.memos?.removeAll(where: { $0.id == memo.id })
+        addFirestore(for: memo, about: book)
     }
     
     func replace(_ memo: Memo, about book: Book) {
-        guard let targetBookIndex = books?.firstIndex(where: { $0.id == book.id }) else { return }
-        let targetBook = books?[targetBookIndex]
-        guard let targetMemoIndex = targetBook?.memos?.firstIndex(where: { $0.id == memo.id }) else { return }
-        memo.updateDate = Date()
-        targetBook?.memos?[targetMemoIndex] = memo
+        replaceFirestore(for: memo, about: book)
+    }
+    
+    func remove(_ memo: Memo, about book: Book) {
+        memosCollection(for: book)?.document(memo.id).delete { error in
+            if let error = error { print(error) }
+        }
+    }
+}
+
+private extension User {
+    func memosCollection(for book: Book) -> CollectionReference? {
+        return booksCollection?.document(book.id).collection("memos")
+    }
+    
+    func addFirestore(for memo: Memo, about book: Book) {
+        let docData: [String: Any] = [
+            "title": memo.title,
+            "text": memo.text,
+            "create_date": Timestamp(date: memo.createDate),
+        ]
+        memosCollection(for: book)?.document(memo.id).setData(docData) { error in
+            if let error = error { print(error) }
+        }
+    }
+    
+    func replaceFirestore(for memo: Memo, about book: Book) {
+        let docData: [String: Any] = [
+            "title": memo.title,
+            "text": memo.text,
+            "create_date": Timestamp(date: memo.createDate),
+            "update_date": Timestamp(date: Date())
+        ]
+        memosCollection(for: book)?.document(memo.id).setData(docData) { error in
+            if let error = error { print(error) }
+        }
     }
 }

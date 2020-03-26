@@ -23,8 +23,9 @@ final class MemoListViewModel {
     }
     
     func fetchMemos() {
-        guard let memos = model.fetchMemos() else { return }
-        memosRelay.accept(memos)
+        model.fetchMemos { [weak self] memos in
+            self?.memosRelay.accept(memos)
+        }
     }
     
     func remove(_ memo: Memo) {

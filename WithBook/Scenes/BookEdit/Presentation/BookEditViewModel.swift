@@ -25,7 +25,7 @@ final class BookEditViewModel {
         self.model = model
         self.mode = mode
         switch mode {
-        case .adding: book = Book(title: "", author: nil, image: nil)
+        case .adding: book = Book(title: "")
         case .replacing(let book): self.book = book
         }
     }
@@ -53,7 +53,7 @@ extension BookEditViewModel: ViewModel {
         
         input.author
             .drive(onNext: { [weak self] author in
-                self?.book.author = author
+                self?.book.author = author ?? Const.defaultText
             })
             .disposed(by: disposeBag)
             
