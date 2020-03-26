@@ -16,6 +16,7 @@ protocol MemoEdit {
 }
 
 struct MemoEditModel: MemoEdit {
+    private let user: User = .shared
     let book: Book
     
     func validate(_ title: String?) -> Driver<Bool> {
@@ -24,12 +25,12 @@ struct MemoEditModel: MemoEdit {
     }
     
     func add(_ memo: Memo) -> Observable<Void> {
-        User.shared.add(memo, about: book)
+        user.add(memo, about: book)
         return .just(())
     }
     
     func replace(_ memo: Memo) -> Observable<Void> {
-        User.shared.replace(memo, about: book)
+        user.replace(memo, about: book)
         return .just(())
     }
 }

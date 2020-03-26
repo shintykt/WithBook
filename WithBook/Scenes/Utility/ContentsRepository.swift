@@ -6,7 +6,8 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import Firebase
+import FirebaseAuth
+import FirebaseFirestore
 import Foundation
 
 struct ContentsRepository {

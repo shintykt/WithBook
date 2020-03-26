@@ -6,8 +6,7 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import Firebase
-import RxSwift
+import Foundation
 
 final class User {
     static let shared = User()

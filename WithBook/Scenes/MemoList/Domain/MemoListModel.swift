@@ -14,8 +14,8 @@ protocol MemoList {
 }
 
 struct MemoListModel: MemoList {
-    let book: Book
     private let user: User = .shared
+    let book: Book
     
     func fetchMemos(completion: @escaping ([Memo]) -> Void) {
         user.fetchMemos(about: book) { memos in
