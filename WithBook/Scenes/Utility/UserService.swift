@@ -1,5 +1,5 @@
 //
-//  UserEntity.swift
+//  UserService.swift
 //  WithBook
 //
 //  Created by shintykt on 2020/02/12.
@@ -11,32 +11,7 @@ import RxSwift
 
 final class User {
     static let shared = User()
-    
-    private var name = ""
-    private var password = ""
-    
     private init() {}
-}
-
-// MARK: - アカウント操作
-
-extension User {
-        func createAccount(name: String, password: String) {
-    //        let id = UUID().uuidString
-        }
-        
-        func deleteAccount() {
-            
-        }
-        
-        func signIn(name: String, password: String) {
-            self.name = name
-            self.password = password
-        }
-        
-        func signOut() {
-            
-        }
 }
 
 // MARK: - ブック操作
