@@ -34,7 +34,7 @@ final class MemoView: UIView {
         
         titleLabel.text = memo.title
         textView.text = memo.text
-        imageView.image = memo.image
+        imageView.image = memo.imageData.image
         
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")

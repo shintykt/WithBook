@@ -8,6 +8,7 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 import Foundation
 
 struct ContentsRepository {
@@ -18,21 +19,30 @@ struct ContentsRepository {
 // MARK: - ブック操作
 
 extension ContentsRepository {
-    func fetchFirestore(completion: @escaping ([Book]?) -> Void) {
-        booksCollection()?.getDocuments(completion: { snapshot, error in
+    // FIXME: 画像取得の最適化(キャッシュ化)
+    func fetchFirebase(completion: @escaping (Book) -> Void) {
+        booksCollection()?.getDocuments { snapshot, error in
             if let error = error { print(error) }
-            completion(snapshot?.documents.map {
+            
+            snapshot?.documents.forEach {
                 let data = $0.data()
-                return Book(
+                let book = Book(
                     id: $0.documentID,
                     title: data["title"] as! String,
                     author: data["author"] as! String
                 )
-            })
-        })
+                
+                self.bookImagesStorage()?.child(book.imageName).getData(maxSize: 10 * 1024 * 1024) { data, error in
+                    if let error = error { print(error) }
+                    guard let data = data else { return }
+                    book.imageData = data
+                    completion(book)
+                }
+            }
+        }
     }
     
-    func addFirestore(for book: Book) {
+    func addFirebase(for book: Book) {
         let docData = [
             "title": book.title,
             "author": book.author
@@ -40,9 +50,13 @@ extension ContentsRepository {
         booksCollection()?.document(book.id).setData(docData) { error in
             if let error = error { print(error) }
         }
+        
+        bookImagesStorage()?.child(book.imageName).putData(book.imageData, metadata: nil) { _, error in
+            if let error = error { print(error) }
+        }
     }
     
-    func replaceFirestore(for book: Book) {
+    func replaceFirebase(for book: Book) {
         let docData = [
             "title": book.title,
             "author": book.author
@@ -50,10 +64,18 @@ extension ContentsRepository {
         booksCollection()?.document(book.id).setData(docData) { error in
             if let error = error { print(error) }
         }
+        
+        bookImagesStorage()?.child(book.imageName).putData(book.imageData, metadata: nil) { _, error in
+            if let error = error { print(error) }
+        }
     }
     
-    func removeFirestore(for book: Book) {
+    func removeFirebase(for book: Book) {
         booksCollection()?.document(book.id).delete { error in
+            if let error = error { print(error) }
+        }
+        
+        bookImagesStorage()?.child(book.imageName).delete { error in
             if let error = error { print(error) }
         }
     }
@@ -62,36 +84,52 @@ extension ContentsRepository {
         guard let user = Auth.auth().currentUser else { return nil }
         return Firestore.firestore().collection("users").document(user.uid).collection("books")
     }
+    
+    private func bookImagesStorage() -> StorageReference? {
+        guard let user = Auth.auth().currentUser else { return nil }
+        guard let url = strageULR else { return nil }
+        let storage = Storage.storage().reference(forURL: url)
+        return storage.child("users").child(user.uid).child("bookImages")
+    }
+    
+    private var strageULR: String? {
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") else { return nil }
+        guard let dictionary = NSDictionary(contentsOfFile: path) as? [String : Any] else { return nil }
+        guard let bucket = dictionary["STORAGE_BUCKET"] as? String else { return nil }
+        return "gs://" + bucket
+    }
 }
 
 // MARK: - メモ操作
 
 extension ContentsRepository {
-    func fetchFirestore(about book: Book, completion: @escaping ([Memo]?) -> Void) {
-        memosCollection(about: book)?.getDocuments(completion: { snapshot, error in
+    // FIXME: 画像取得の最適化(キャッシュ化)
+    func fetchFirebase(about book: Book, completion: @escaping (Memo) -> Void) {
+        memosCollection(about: book)?.getDocuments { snapshot, error in
             if let error = error { print(error) }
-            completion(snapshot?.documents.map {
+            snapshot?.documents.forEach {
                 let data = $0.data()
                 let createTimeStamp = data["create_date"] as! Timestamp
                 let updateTimeStamp = data["update_date"] as? Timestamp
-                return Memo(
+                let memo = Memo(
                     id: $0.documentID,
                     createDate: createTimeStamp.dateValue(),
                     updateDate: updateTimeStamp?.dateValue(),
                     title: data["title"] as! String,
                     text: data["text"] as! String
                 )
-            })
-        })
-    }
-    
-    func removeFirestore(for memo: Memo, about book: Book) {
-        memosCollection(about: book)?.document(memo.id).delete { error in
-            if let error = error { print(error) }
+                
+                self.memoImagesStorage(about: book)?.child(memo.imageName).getData(maxSize: 10 * 1024 * 1024) { data, error in
+                    if let error = error { print(error) }
+                    guard let data = data else { return }
+                    memo.imageData = data
+                    completion(memo)
+                }
+            }
         }
     }
     
-    func addFirestore(for memo: Memo, about book: Book) {
+    func addFirebase(for memo: Memo, about book: Book) {
         let docData: [String: Any] = [
             "title": memo.title,
             "text": memo.text,
@@ -100,9 +138,13 @@ extension ContentsRepository {
         memosCollection(about: book)?.document(memo.id).setData(docData) { error in
             if let error = error { print(error) }
         }
+        
+        memoImagesStorage(about: book)?.child(memo.imageName).putData(memo.imageData, metadata: nil) { _, error in
+            if let error = error { print(error) }
+        }
     }
     
-    func replaceFirestore(for memo: Memo, about book: Book) {
+    func replaceFirebase(for memo: Memo, about book: Book) {
         let docData: [String: Any] = [
             "title": memo.title,
             "text": memo.text,
@@ -112,9 +154,27 @@ extension ContentsRepository {
         memosCollection(about: book)?.document(memo.id).setData(docData) { error in
             if let error = error { print(error) }
         }
+        
+        memoImagesStorage(about: book)?.child(memo.imageName).putData(memo.imageData, metadata: nil) { _, error in
+            if let error = error { print(error) }
+        }
+    }
+    
+    func removeFirebase(for memo: Memo, about book: Book) {
+        memosCollection(about: book)?.document(memo.id).delete { error in
+            if let error = error { print(error) }
+        }
+        
+        memoImagesStorage(about: book)?.child(memo.imageName).delete { error in
+            if let error = error { print(error) }
+        }
     }
     
     private func memosCollection(about book: Book) -> CollectionReference? {
         return booksCollection()?.document(book.id).collection("memos")
+    }
+    
+    private func memoImagesStorage(about book: Book) -> StorageReference? {
+        return bookImagesStorage()?.child(book.id).child("memoImages")
     }
 }

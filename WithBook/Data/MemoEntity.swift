@@ -6,15 +6,18 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 final class Memo {
     let id: String
     let createDate: Date
     var updateDate: Date?
     var title: String
-    var image: UIImage
     var text: String
+    var imageData: Data
+    var imageName: String {
+        return "\(id).jpg"
+    }
     var pages: [Int]?
     
     init(
@@ -23,7 +26,7 @@ final class Memo {
         updateDate: Date? = nil,
         title: String,
         text: String = Const.defaultText,
-        image: UIImage = Const.defaultImage,
+        imageData: Data = Const.defaultImage.compressedJpegData,
         pages: [Int]? = nil
     ) {
         self.id = id
@@ -31,7 +34,7 @@ final class Memo {
         self.updateDate = updateDate
         self.title = title
         self.text = text
-        self.image = image
+        self.imageData = imageData
         self.pages = pages
     }
 }

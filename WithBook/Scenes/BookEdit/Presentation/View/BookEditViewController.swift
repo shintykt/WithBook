@@ -54,6 +54,12 @@ private extension BookEditViewController {
             }
             .disposed(by: disposeBag)
         
+        selectImageButton.rx.tap
+            .subscribe { [weak self] _ in
+                self?.selectImage()
+            }
+            .disposed(by: disposeBag)
+        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
@@ -65,7 +71,7 @@ private extension BookEditViewController {
         guard case .replacing(let book) = viewModel.mode else { return }
         titleTextField.text = book.title
         authorTextField.text = book.author
-        imageView.image = book.image
+        imageView.image = book.imageData.image
     }
     
     func setUpViewModel() {
@@ -77,7 +83,6 @@ private extension BookEditViewController {
         let input = BookEditViewModel.Input(
             title: titleTextField.rx.text.orEmpty.asDriver(),
             author: authorTextField.rx.text.asDriver(),
-            image: imageView.rx.image,
             completionTrigger: completionTrigger
         )
         
@@ -95,5 +100,24 @@ private extension BookEditViewController {
                 }
             }
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: 画像取得
+
+extension BookEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private func selectImage() {
+        guard UIImagePickerController.isSourceTypeAvailable(.photoLibrary) else { return }
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[.originalImage] as? UIImage else { return }
+        imageView.image = selectedImage
+        viewModel.input(selectedImage)
+        dismiss(animated: true)
     }
 }

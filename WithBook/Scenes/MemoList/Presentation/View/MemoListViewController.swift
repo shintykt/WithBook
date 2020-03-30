@@ -65,7 +65,7 @@ private extension MemoListViewController {
                 self?.view.subviews.forEach {
                     $0.removeFromSuperview()
                 }
-                let memoViews = memos?.map { memo -> MemoView in
+                let memoViews = memos.map { memo -> MemoView in
                     let memoView = MemoView(memo: memo)
                     let memoTap = UITapGestureRecognizer()
                     memoTap.rx.event
@@ -92,7 +92,7 @@ private extension MemoListViewController {
                     memoView.addGestureRecognizer(memoTap)
                     return memoView
                 }
-                memoViews?.forEach {
+                memoViews.forEach {
                     self?.view.addSubview($0)
                 }
             })

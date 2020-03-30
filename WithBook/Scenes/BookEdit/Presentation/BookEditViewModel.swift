@@ -35,7 +35,6 @@ extension BookEditViewModel: ViewModel {
     struct Input {
         let title: Driver<String>
         let author: Driver<String?>
-        let image: Binder<UIImage?>
         let completionTrigger: Observable<Void>
     }
     
@@ -56,9 +55,6 @@ extension BookEditViewModel: ViewModel {
                 self?.book.author = author ?? Const.defaultText
             })
             .disposed(by: disposeBag)
-            
-        input.image
-            .onNext(book.image)
         
         let canTapComplete = input.title
             .flatMap { title -> Driver<Bool> in
@@ -77,5 +73,11 @@ extension BookEditViewModel: ViewModel {
             canTapComplete: canTapComplete,
             completionStatus: completionStatus
         )
+    }
+}
+
+extension BookEditViewModel {
+    func input(_ image: UIImage) {
+        book.imageData = image.compressedJpegData
     }
 }

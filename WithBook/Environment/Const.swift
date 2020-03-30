@@ -11,4 +11,5 @@ import UIKit
 struct Const {
     static let defaultText = "-----"
     static let defaultImage = R.image.defaultImage()!
+    static let imageCompressionRate: CGFloat = 0.7
 }

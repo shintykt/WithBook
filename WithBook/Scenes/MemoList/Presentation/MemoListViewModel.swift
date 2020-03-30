@@ -12,10 +12,10 @@ import RxSwift
 final class MemoListViewModel {
     private var model: MemoList
     
-    private var memos: Driver<[Memo]?> {
+    private var memos: Driver<[Memo]> {
         return memosRelay.asDriver()
     }
-    private let memosRelay = BehaviorRelay<[Memo]?>(value: [])
+    private let memosRelay = BehaviorRelay<[Memo]>(value: [])
         
     init(model: MemoList) {
         self.model = model
@@ -23,7 +23,9 @@ final class MemoListViewModel {
     }
     
     func fetchMemos() {
-        model.fetchMemos { [weak self] memos in
+        var memos: [Memo] = []
+        model.fetchMemos { [weak self] memo in
+            memos.append(memo)
             self?.memosRelay.accept(memos)
         }
     }
@@ -38,7 +40,7 @@ extension MemoListViewModel: ViewModel {
     }
     
     struct Output {
-        let memos: Driver<[Memo]?>
+        let memos: Driver<[Memo]>
     }
     
     func transform(input: Input) -> Output {

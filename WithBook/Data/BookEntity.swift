@@ -6,24 +6,27 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 final class Book {
     let id: String
     var title: String
     var author: String
-    var image: UIImage
+    var imageData: Data
+    var imageName: String {
+        return "\(id).jpg"
+    }
     var memos: [Memo]? = []
     
     init(
         id: String = UUID().uuidString,
         title: String,
         author: String = Const.defaultText,
-        image: UIImage = Const.defaultImage
+        imageData: Data = Const.defaultImage.compressedJpegData
     ) {
         self.id = id
         self.title = title
         self.author = author
-        self.image = image
+        self.imageData = imageData
     }
 }

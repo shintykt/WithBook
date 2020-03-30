@@ -23,10 +23,13 @@ final class BookListViewModel {
     }
     
     func fetchBooks() {
-        model.fetchBooks { [weak self] books in
-            let items = books.map { BookListSectionItem(book: $0) }
+        var items: [BookListSectionItem] = []
+        model.fetchBooks { [weak self] book in
+            guard let strongSelf = self else { return }
+            let item = BookListSectionItem(book: book)
+            items.append(item)
             let sectionModel = BookListSectionModel(model: .normal, items: items)
-            self?.booksRelay.accept([sectionModel])
+            strongSelf.booksRelay.accept([sectionModel])
         }
     }
     

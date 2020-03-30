@@ -31,7 +31,7 @@ final class BookListViewController: UICollectionViewController {
                 cell.inject(item.book)
             }
             return cell
-        })
+    })
     
     private let viewModel = BookListViewModel(model: BookListModel())
     private let disposeBag = DisposeBag()

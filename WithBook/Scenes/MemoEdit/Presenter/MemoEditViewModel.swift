@@ -35,7 +35,6 @@ extension MemoEditViewModel: ViewModel {
     struct Input {
         let title: Driver<String>
         let text: Driver<String?>
-        let image: Binder<UIImage?>
         let completionTrigger: Observable<Void>
     }
     
@@ -56,9 +55,6 @@ extension MemoEditViewModel: ViewModel {
                 self?.memo.text = text ?? Const.defaultText
             })
             .disposed(by: disposeBag)
-            
-        input.image
-            .onNext(memo.image)
         
         let canTapComplete = input.title
             .flatMap { title -> Driver<Bool> in
@@ -77,5 +73,11 @@ extension MemoEditViewModel: ViewModel {
             canTapComplete: canTapComplete,
             completionStatus: completionStatus
         )
+    }
+}
+
+extension MemoEditViewModel {
+    func input(_ image: UIImage) {
+        memo.imageData = image.compressedJpegData
     }
 }

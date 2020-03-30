@@ -55,6 +55,12 @@ private extension MemoEditViewController {
             }
             .disposed(by: disposeBag)
         
+        selectImageButton.rx.tap
+            .subscribe { [weak self] _ in
+                self?.selectImage()
+            }
+            .disposed(by: disposeBag)
+        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
@@ -66,7 +72,7 @@ private extension MemoEditViewController {
         guard case .replacing(let memo) = viewModel.mode else { return }
         titleTextField.text = memo.title
         textView.text = memo.text
-        imageView.image = memo.image
+        imageView.image = memo.imageData.image
     }
     
     
@@ -79,7 +85,6 @@ private extension MemoEditViewController {
         let input = MemoEditViewModel.Input(
             title: titleTextField.rx.text.orEmpty.asDriver(),
             text: textView.rx.text.asDriver(),
-            image: imageView.rx.image,
             completionTrigger: completionTrigger
         )
         
@@ -97,5 +102,24 @@ private extension MemoEditViewController {
                 }
             }
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: 画像取得
+
+extension MemoEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private func selectImage() {
+        guard UIImagePickerController.isSourceTypeAvailable(.photoLibrary) else { return }
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let selectedImage = info[.originalImage] as? UIImage else { return }
+        imageView.image = selectedImage
+        viewModel.input(selectedImage)
+        dismiss(animated: true)
     }
 }

@@ -9,16 +9,16 @@
 import Foundation
 
 protocol BookList {
-    func fetchBooks(completion: @escaping ([Book]) -> Void)
+    func fetchBooks(completion: @escaping (Book) -> Void)
     func remove(_ book: Book)
 }
 
 struct BookListModel: BookList {
     private let user: User = .shared
     
-    func fetchBooks(completion: @escaping ([Book]) -> Void) {
-        user.fetchBooks { books in
-            completion(books)
+    func fetchBooks(completion: @escaping (Book) -> Void) {
+        user.fetchBooks { book in
+            completion(book)
         }
     }
     
