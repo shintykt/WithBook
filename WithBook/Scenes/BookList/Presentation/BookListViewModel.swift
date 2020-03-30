@@ -7,7 +7,6 @@
 //
 
 import RxCocoa
-import RxSwift
 
 final class BookListViewModel {
     private var model: BookList
@@ -23,22 +22,32 @@ final class BookListViewModel {
     }
     
     func fetchBooks() {
-        model.fetchBooks { [weak self] books in
-            let items = books.map { BookListSectionItem(book: $0) }
-            let sectionModel = BookListSectionModel(model: .normal, items: items)
-            self?.booksRelay.accept([sectionModel])
+        model.fetchBooks { [weak self] sectionModels in
+            self?.booksRelay.accept(sectionModels)
         }
     }
     
-    func remove(_ book: BookListSectionItem) {
-        model.remove(book.book)
-        fetchBooks()
+    func add(_ item: BookListSectionItem) {
+        model.add(item) { [weak self] sectionModels in
+            self?.booksRelay.accept(sectionModels)
+        }
+    }
+    
+    func replace(_ item: BookListSectionItem) {
+        model.replace(item) { [weak self] sectionModels in
+            self?.booksRelay.accept(sectionModels)
+        }
+    }
+    
+    func remove(_ item: BookListSectionItem) {
+        model.remove(item) { [weak self] sectionModels in
+            self?.booksRelay.accept(sectionModels)
+        }
     }
 }
 
 extension BookListViewModel: ViewModel {
-    struct Input {
-    }
+    struct Input {}
     
     struct Output {
         let books: Driver<[BookListSectionModel]>

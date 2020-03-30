@@ -18,45 +18,43 @@ final class User {
 // MARK: - ブック操作
 
 extension User {
-    func fetchBooks(completion: @escaping ([Book]) -> Void) {
-        repository.fetchFirestore { books in
-            guard let books = books else { return }
-            completion(books)
+    func fetchBooks(completion: @escaping (Book) -> Void) {
+        repository.fetchFirebase { book in
+            completion(book)
         }
     }
     
     func add(_ book: Book) {
-        repository.addFirestore(for: book)
+        repository.addFirebase(for: book)
     }
     
     func replace(_ book: Book) {
-        repository.replaceFirestore(for: book)
+        repository.replaceFirebase(for: book)
     }
     
     func remove(_ book: Book) {
-        repository.removeFirestore(for: book)
+        repository.removeFirebase(for: book)
     }
 }
 
 // MARK: - メモ操作
 
 extension User {
-    func fetchMemos(about book: Book, completion: @escaping ([Memo]) -> Void) {
-        repository.fetchFirestore(about: book) { memos in
-            guard let memos = memos else { return }
-            completion(memos)
+    func fetchMemos(about book: Book, completion: @escaping (Memo) -> Void) {
+        repository.fetchFirebase(about: book) { memo in
+            completion(memo)
         }
     }
     
     func add(_ memo: Memo, about book: Book) {
-        repository.addFirestore(for: memo, about: book)
+        repository.addFirebase(for: memo, about: book)
     }
     
     func replace(_ memo: Memo, about book: Book) {
-        repository.replaceFirestore(for: memo, about: book)
+        repository.replaceFirebase(for: memo, about: book)
     }
     
     func remove(_ memo: Memo, about book: Book) {
-        repository.removeFirestore(for: memo, about: book)
+        repository.removeFirebase(for: memo, about: book)
     }
 }

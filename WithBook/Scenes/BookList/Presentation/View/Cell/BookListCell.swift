@@ -24,7 +24,7 @@ final class BookListCell: UICollectionViewCell {
     }
     
     func inject(_ book: Book) {
-        imageView.image = book.image
+        imageView.image = book.imageData.image
         titleLabel.text = book.title
         authorLabel.text = book.author
     }

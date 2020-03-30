@@ -58,7 +58,6 @@ private extension SignInViewController {
                         strongSelf.present(alert, animated: true)
                         return
                     }
-                    // TODO: uidにひもづいたBookを取得
                     let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
                     strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
                 }
