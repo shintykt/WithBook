@@ -23,7 +23,6 @@
 		4FFB4AAB2422033200468B92 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1674B72403781A00047A24 /* ViewModel.swift */; };
 		4FFB4AAC2422033200468B92 /* MemoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A9A3223F4169200FD4CCD /* MemoEntity.swift */; };
 		4FFB4AAD2422033200468B92 /* MemoViewStatusDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F51A86D23F8F8AF00899672 /* MemoViewStatusDelegate.swift */; };
-		4FFB4AAE2422033200468B92 /* PresentedControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8ED7262404EBFD00526921 /* PresentedControllerDelegate.swift */; };
 		4FFB4AAF2422033200468B92 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D78DD2409F3A000BCA809 /* R.generated.swift */; };
 		4FFB4AB02422033200468B92 /* MemoEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F123A4D240C91FB002080D9 /* MemoEditViewController.swift */; };
 		4FFB4AB12422033200468B92 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A9A3423F417DE00FD4CCD /* UserService.swift */; };
@@ -82,7 +81,6 @@
 		4F8ED71B2404A4D400526921 /* BookEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookEditViewController.swift; sourceTree = "<group>"; };
 		4F8ED7202404B29300526921 /* BookEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookEditViewModel.swift; sourceTree = "<group>"; };
 		4F8ED7222404B49E00526921 /* BookEditModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookEditModel.swift; sourceTree = "<group>"; };
-		4F8ED7262404EBFD00526921 /* PresentedControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentedControllerDelegate.swift; sourceTree = "<group>"; };
 		4F9A9A1C23F415B700FD4CCD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4F9A9A2023F415B700FD4CCD /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		4F9A9A2523F415B900FD4CCD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -339,7 +337,6 @@
 				4F9A9A3423F417DE00FD4CCD /* UserService.swift */,
 				4FCD6CA9242C682500AC5D36 /* ContentsRepository.swift */,
 				4F1674B72403781A00047A24 /* ViewModel.swift */,
-				4F8ED7262404EBFD00526921 /* PresentedControllerDelegate.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -607,7 +604,6 @@
 				4FFB4AAB2422033200468B92 /* ViewModel.swift in Sources */,
 				4FFB4AAC2422033200468B92 /* MemoEntity.swift in Sources */,
 				4FFB4AAD2422033200468B92 /* MemoViewStatusDelegate.swift in Sources */,
-				4FFB4AAE2422033200468B92 /* PresentedControllerDelegate.swift in Sources */,
 				4FFB4AAF2422033200468B92 /* R.generated.swift in Sources */,
 				4FFB4AB02422033200468B92 /* MemoEditViewController.swift in Sources */,
 				4FFB4AB12422033200468B92 /* UserService.swift in Sources */,

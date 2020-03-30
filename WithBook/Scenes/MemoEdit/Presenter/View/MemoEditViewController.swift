@@ -10,6 +10,10 @@ import RxCocoa
 import RxSwift
 import UIKit
 
+protocol MemoEditDelegate: AnyObject {
+    func didEdit(for mode: MemoEditMode, memo: Memo)
+}
+
 struct MemoEditViewControllerFactory {
     private init() {}
     static func create(for book: Book, _ mode: MemoEditMode) -> MemoEditViewController {
@@ -29,7 +33,7 @@ final class MemoEditViewController: UIViewController {
     private var viewModel: MemoEditViewModel!
     private let disposeBag = DisposeBag()
     
-    weak var delegate: PresentedControllerDelegate?
+    weak var delegate: MemoEditDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +65,14 @@ private extension MemoEditViewController {
             }
             .disposed(by: disposeBag)
         
+        completeButton.rx.tap
+            .subscribe { [weak self] event in
+                guard let strongSelf = self else { return }
+                strongSelf.dismiss(animated: true)
+                strongSelf.delegate?.didEdit(for: strongSelf.viewModel.mode, memo: strongSelf.viewModel.memo)
+            }
+            .disposed(by: disposeBag)
+        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
@@ -77,35 +89,19 @@ private extension MemoEditViewController {
     
     
     func setUpViewModel() {
-        let completionTrigger = completeButton.rx.tap.asObservable()
-            .flatMap { _ -> Observable<Void> in
-                return .just(())
-            }
-        
         let input = MemoEditViewModel.Input(
             title: titleTextField.rx.text.orEmpty.asDriver(),
-            text: textView.rx.text.asDriver(),
-            completionTrigger: completionTrigger
+            text: textView.rx.text.asDriver()
         )
         
         let output = viewModel.transform(input: input)
         output.canTapComplete
             .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
-        output.completionStatus
-            .subscribe { [weak self] event in
-                switch event {
-                case .next, .completed:
-                    self?.dismiss(animated: true)
-                    self?.delegate?.presentedControllerWillDismiss()
-                case .error(let error): print(error.localizedDescription)
-                }
-            }
-            .disposed(by: disposeBag)
     }
 }
 
-// MARK: 画像取得
+// MARK: - 画像取得
 
 extension MemoEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func selectImage() {

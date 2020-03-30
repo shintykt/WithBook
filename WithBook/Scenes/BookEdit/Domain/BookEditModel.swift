@@ -7,12 +7,9 @@
 //
 
 import RxCocoa
-import RxSwift
 
 protocol BookEdit {
     func validate(_ title: String?) -> Driver<Bool>
-    func add(_ book: Book) -> Observable<Void>
-    func replace(_ book: Book) -> Observable<Void>
 }
 
 struct BookEditModel: BookEdit {
@@ -21,15 +18,5 @@ struct BookEditModel: BookEdit {
     func validate(_ title: String?) -> Driver<Bool> {
         guard let title = title else { return .just(false) }
         return .just(!title.isEmpty)
-    }
-    
-    func add(_ book: Book) -> Observable<Void> {
-        user.add(book)
-        return .just(())
-    }
-    
-    func replace(_ book: Book) -> Observable<Void> {
-        user.replace(book)
-        return .just(())
     }
 }

@@ -118,12 +118,16 @@ extension BookListViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - モーダル管理(iOS13対応)
+// MARK: - ブック追加・編集
 
-extension BookListViewController: PresentedControllerDelegate {
+extension BookListViewController: BookEditDelegate {
     // 追加・編集が終了したらリストを更新
-    func presentedControllerWillDismiss() {
-        viewModel.fetchBooks()
+    func didEdit(for mode: BookEditMode, book: Book) {
+        let item = BookListSectionItem(book: book)
+        switch mode {
+        case .adding: viewModel.add(item)
+        case .replacing: viewModel.replace(item)
+        }
         collectionView.reloadData()
     }
 }

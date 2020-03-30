@@ -10,6 +10,10 @@ import RxCocoa
 import RxSwift
 import UIKit
 
+protocol BookEditDelegate: AnyObject {
+    func didEdit(for mode: BookEditMode, book: Book)
+}
+
 struct BookEditViewControllerFactory {
     private init() {}
     static func create(for mode: BookEditMode) -> BookEditViewController {
@@ -29,7 +33,7 @@ final class BookEditViewController: UIViewController {
     private var viewModel: BookEditViewModel!
     private let disposeBag = DisposeBag()
     
-    weak var delegate: PresentedControllerDelegate?
+    weak var delegate: BookEditDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +64,14 @@ private extension BookEditViewController {
             }
             .disposed(by: disposeBag)
         
+        completeButton.rx.tap
+            .subscribe { [weak self] event in
+                guard let strongSelf = self else { return }
+                strongSelf.dismiss(animated: true)
+                strongSelf.delegate?.didEdit(for: strongSelf.viewModel.mode, book: strongSelf.viewModel.book)
+            }
+            .disposed(by: disposeBag)
+        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
@@ -75,35 +87,19 @@ private extension BookEditViewController {
     }
     
     func setUpViewModel() {
-        let completionTrigger = completeButton.rx.tap.asObservable()
-            .flatMap { _ -> Observable<Void> in
-                return .just(())
-            }
-        
         let input = BookEditViewModel.Input(
             title: titleTextField.rx.text.orEmpty.asDriver(),
-            author: authorTextField.rx.text.asDriver(),
-            completionTrigger: completionTrigger
+            author: authorTextField.rx.text.asDriver()
         )
         
         let output = viewModel.transform(input: input)
         output.canTapComplete
             .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
-        output.completionStatus
-            .subscribe { [weak self] event in
-                switch event {
-                case .next, .completed:
-                    self?.dismiss(animated: true)
-                    self?.delegate?.presentedControllerWillDismiss()
-                case .error(let error): print(error.localizedDescription)
-                }
-            }
-            .disposed(by: disposeBag)
     }
 }
 
-// MARK: 画像取得
+// MARK: - 画像取得
 
 extension BookEditViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func selectImage() {

@@ -20,6 +20,8 @@ final class MemoView: UIView {
     private var xFromCenter: CGFloat = 0.0
     private var yFromCenter: CGFloat = 0.0
     
+    var id: String = ""
+    
     weak var delegate: MemoViewStatusDelegate?
     
     override init(frame: CGRect) {
@@ -32,6 +34,7 @@ final class MemoView: UIView {
         let frame = CGRect(origin: .zero, size: CGSize(width: 340, height: 450))
         self.init(frame: frame)
         
+        id = memo.id
         titleLabel.text = memo.title
         textView.text = memo.text
         imageView.image = memo.imageData.image
