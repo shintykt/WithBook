@@ -200,7 +200,7 @@ private extension MemoView {
         
         // スワイプアニメーション
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: Const.animationDuration,
             animations: {
                 self.center = afterHiddenCenter
             }, completion: { [weak self] _ in
@@ -211,7 +211,7 @@ private extension MemoView {
     
     // メモの位置をリセット
     func resetPotion() {
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: Const.animationDuration) {
             self.center = self.originalCenter
         }
         delegate?.didResetPosition()
