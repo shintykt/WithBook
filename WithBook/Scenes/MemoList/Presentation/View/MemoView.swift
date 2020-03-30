@@ -20,6 +20,8 @@ final class MemoView: UIView {
     private var xFromCenter: CGFloat = 0.0
     private var yFromCenter: CGFloat = 0.0
     
+    var id: String = ""
+    
     weak var delegate: MemoViewStatusDelegate?
     
     override init(frame: CGRect) {
@@ -32,9 +34,10 @@ final class MemoView: UIView {
         let frame = CGRect(origin: .zero, size: CGSize(width: 340, height: 450))
         self.init(frame: frame)
         
+        id = memo.id
         titleLabel.text = memo.title
-        textView.text = !(memo.text?.isEmpty ?? true) ? memo.text : Const.defaultText
-        imageView.image = memo.image != nil ? memo.image : Const.defaultImage
+        textView.text = memo.text
+        imageView.image = memo.imageData.image
         
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ja_JP")
@@ -200,7 +203,7 @@ private extension MemoView {
         
         // スワイプアニメーション
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: Const.animationDuration,
             animations: {
                 self.center = afterHiddenCenter
             }, completion: { [weak self] _ in
@@ -211,7 +214,7 @@ private extension MemoView {
     
     // メモの位置をリセット
     func resetPotion() {
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: Const.animationDuration) {
             self.center = self.originalCenter
         }
         delegate?.didResetPosition()

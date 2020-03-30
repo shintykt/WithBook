@@ -31,7 +31,7 @@ final class BookListViewController: UICollectionViewController {
                 cell.inject(item.book)
             }
             return cell
-        })
+    })
     
     private let viewModel = BookListViewModel(model: BookListModel())
     private let disposeBag = DisposeBag()
@@ -55,7 +55,8 @@ private extension BookListViewController {
             .subscribe { [weak self] _ in
                 let bookEditViewController = BookEditViewControllerFactory.create(for: .adding)
                 bookEditViewController.delegate = self
-                self?.present(bookEditViewController, animated: true)
+                let navigationController = UINavigationController(rootViewController: bookEditViewController)
+                self?.present(navigationController, animated: true)
             }
             .disposed(by: disposeBag)
 
@@ -75,7 +76,8 @@ private extension BookListViewController {
                 let replaceAction = UIAlertAction(title: "ブックを編集する", style: .default) { _ in
                     let bookEditViewController = BookEditViewControllerFactory.create(for: .replacing(item.book))
                     bookEditViewController.delegate = self
-                    self?.present(bookEditViewController, animated: true)
+                    let navigationController = UINavigationController(rootViewController: bookEditViewController)
+                    self?.present(navigationController, animated: true)
                 }
                 let removeAction = UIAlertAction(title: "ブックを削除する", style: .default) { _ in
                     self?.viewModel.remove(item)
@@ -116,12 +118,16 @@ extension BookListViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - モーダル管理(iOS13対応)
+// MARK: - ブック追加・編集
 
-extension BookListViewController: PresentedControllerDelegate {
+extension BookListViewController: BookEditDelegate {
     // 追加・編集が終了したらリストを更新
-    func presentedControllerWillDismiss() {
-        viewModel.fetchBooks()
+    func didEdit(for mode: BookEditMode, book: Book) {
+        let item = BookListSectionItem(book: book)
+        switch mode {
+        case .adding: viewModel.add(item)
+        case .replacing: viewModel.replace(item)
+        }
         collectionView.reloadData()
     }
 }

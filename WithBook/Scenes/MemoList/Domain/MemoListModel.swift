@@ -9,18 +9,47 @@
 import Foundation
 
 protocol MemoList {
-    func fetchMemos() -> [Memo]?
-    func remove(_ memo: Memo)
+    func fetchMemos(completion: @escaping ([Memo]) -> Void)
+    func add(_ memo: Memo, completion: @escaping ([Memo]) -> Void)
+    func replace(_ memo: Memo, completion: @escaping ([Memo]) -> Void)
+    func remove(_ memo: Memo, completion: @escaping ([Memo]) -> Void)
 }
 
-struct MemoListModel: MemoList {
-    let book: Book
+final class MemoListModel {
+    private let user: User = .shared
+    private let book: Book
+    private var memos: [Memo] = []
     
-    func fetchMemos() -> [Memo]? {
-        return User.shared.fetchMemos(about: book)
+    init(book: Book) {
+        self.book = book
+    }
+}
+
+extension MemoListModel: MemoList {
+    func fetchMemos(completion: @escaping ([Memo]) -> Void) {
+        user.fetchMemos(about: book) { [weak self] memo in
+            guard let strongSelf = self else { return }
+            strongSelf.memos.append(memo)
+            completion(strongSelf.memos)
+        }
     }
     
-    func remove(_ memo: Memo) {
-        User.shared.remove(memo, about: book)
+    func add(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
+        user.add(memo, about: book)
+        memos.append(memo)
+        completion(memos)
+    }
+    
+    func replace(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
+        user.replace(memo, about: book)
+        guard let targetIndex = memos.firstIndex(where: { $0.id == memo.id }) else { return }
+        memos[targetIndex] = memo
+        completion(memos)
+    }
+    
+    func remove(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
+        user.remove(memo, about: book)
+        memos.removeAll(where: { $0.id == memo.id })
+        completion(memos)
     }
 }

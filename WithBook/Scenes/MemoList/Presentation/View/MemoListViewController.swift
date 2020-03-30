@@ -50,7 +50,8 @@ private extension MemoListViewController {
                 guard let book = self?.book else { return }
                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .adding)
                 memoEditViewController.delegate = self
-                self?.present(memoEditViewController, animated: true)
+                let navigationController = UINavigationController(rootViewController: memoEditViewController)
+                self?.present(navigationController, animated: true)
             }
             .disposed(by: disposeBag)
     }
@@ -61,20 +62,22 @@ private extension MemoListViewController {
         let output = viewModel.transform(input: input)
         output.memos
             .drive(onNext: { [weak self] memos in
-                self?.view.subviews.forEach {
-                    $0.removeFromSuperview()
-                }
-                let memoViews = memos?.map { memo -> MemoView in
+                memos.forEach { [weak self] memo in
+                    self?.view.subviews.filter { ($0 as? MemoView)?.id == memo.id }.forEach {
+                        $0.removeFromSuperview()
+                    }
+                    
                     let memoView = MemoView(memo: memo)
                     let memoTap = UITapGestureRecognizer()
                     memoTap.rx.event
-                        .subscribe { [weak self] _ in
+                        .subscribe { _ in
                             let alert = UIAlertController(title: "選択してください", message: nil, preferredStyle: .actionSheet)
                             let replaceAction = UIAlertAction(title: "メモを編集する", style: .default) { _ in
                                 guard let book = self?.book else { return }
                                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .replacing(memo))
                                 memoEditViewController.delegate = self
-                                self?.present(memoEditViewController, animated: true)
+                                let navigationController = UINavigationController(rootViewController: memoEditViewController)
+                                self?.present(navigationController, animated: true)
                             }
                             let removeAction = UIAlertAction(title: "メモを削除する", style: .default) { _ in
                                 self?.viewModel.remove(memo)
@@ -88,21 +91,22 @@ private extension MemoListViewController {
                         }
                         .disposed(by: self?.disposeBag ?? DisposeBag())
                     memoView.addGestureRecognizer(memoTap)
-                    return memoView
-                }
-                memoViews?.forEach {
-                    self?.view.addSubview($0)
+                    
+                    self?.view.addSubview(memoView)
                 }
             })
             .disposed(by: disposeBag)
     }
 }
 
-// MARK: - モーダル管理(iOS13対応)
+// MARK: - メモ追加・編集
 
-extension MemoListViewController: PresentedControllerDelegate {
+extension MemoListViewController: MemoEditDelegate {
     // 追加・編集が終了したらリストを更新
-    func presentedControllerWillDismiss() {
-        viewModel.fetchMemos()
+    func didEdit(for mode: MemoEditMode, memo: Memo) {
+        switch mode {
+        case .adding: viewModel.add(memo)
+        case .replacing: viewModel.replace(memo)
+        }
     }
 }

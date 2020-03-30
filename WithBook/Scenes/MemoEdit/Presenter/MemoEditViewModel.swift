@@ -19,13 +19,13 @@ final class MemoEditViewModel {
     private let disposeBag = DisposeBag()
     
     let mode: MemoEditMode
-    private let memo: Memo
+    let memo: Memo
     
     init(model: MemoEdit, mode: MemoEditMode) {
         self.model = model
         self.mode = mode
         switch mode {
-        case .adding: memo = Memo(title: "", text: nil, image: nil, pages: nil)
+        case .adding: memo = Memo(title: "")
         case .replacing(let memo): self.memo = memo
         }
     }
@@ -35,13 +35,10 @@ extension MemoEditViewModel: ViewModel {
     struct Input {
         let title: Driver<String>
         let text: Driver<String?>
-        let image: Binder<UIImage?>
-        let completionTrigger: Observable<Void>
     }
     
     struct Output {
         let canTapComplete: Driver<Bool>
-        let completionStatus: Observable<Event<Void>>
     }
     
     func transform(input: Input) -> Output {
@@ -53,29 +50,23 @@ extension MemoEditViewModel: ViewModel {
         
         input.text
             .drive(onNext: { [weak self] text in
-                self?.memo.text = text
+                self?.memo.text = text ?? Const.defaultText
             })
             .disposed(by: disposeBag)
-            
-        input.image
-            .onNext(memo.image)
         
         let canTapComplete = input.title
             .flatMap { title -> Driver<Bool> in
                 return self.model.validate(title)
             }
         
-        let completionStatus = input.completionTrigger
-            .flatMap { _ -> Observable<Event<Void>> in
-                switch self.mode {
-                case .adding: return self.model.add(self.memo).materialize()
-                case .replacing: return self.model.replace(self.memo).materialize()
-                }
-            }
-        
         return Output(
-            canTapComplete: canTapComplete,
-            completionStatus: completionStatus
+            canTapComplete: canTapComplete
         )
+    }
+}
+
+extension MemoEditViewModel {
+    func input(_ image: UIImage) {
+        memo.imageData = image.compressedJpegData
     }
 }
