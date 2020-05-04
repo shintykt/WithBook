@@ -14,7 +14,10 @@ import RxSwift
 
 final class BookRepository {
     func listenBooks() -> Observable<[Book]> {
-        return booksCollection()?.rx.listen()
+        return booksCollection()?
+            .order(by: "createdTime", descending: true)
+            .rx
+            .listen()
             .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .map { snapshot -> [Book] in
