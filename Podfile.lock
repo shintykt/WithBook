@@ -292,6 +292,18 @@ PODS:
     - Differentiator (~> 4.0)
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
+  - RxFirebase/Firestore (0.3.8):
+    - RxFirebaseFirestore (~> 0.3)
+  - RxFirebase/Storage (0.3.8):
+    - RxFirebaseStorage (~> 0.3)
+  - RxFirebaseFirestore (0.3.8):
+    - FirebaseFirestore (~> 1.5)
+    - RxCocoa (~> 5)
+    - RxSwift (~> 5)
+  - RxFirebaseStorage (0.3.8):
+    - FirebaseStorage (~> 3)
+    - RxCocoa (~> 5)
+    - RxSwift (~> 5)
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.0.1)
@@ -306,6 +318,8 @@ DEPENDENCIES:
   - R.swift (= 5.1.0)
   - RxCocoa (= 5.0.1)
   - RxDataSources (= 4.0.1)
+  - RxFirebase/Firestore
+  - RxFirebase/Storage
   - RxSwift (= 5.0.1)
   - SVProgressHUD (= 2.2.5)
 
@@ -338,6 +352,9 @@ SPEC REPOS:
     - R.swift.Library
     - RxCocoa
     - RxDataSources
+    - RxFirebase
+    - RxFirebaseFirestore
+    - RxFirebaseStorage
     - RxRelay
     - RxSwift
     - SVProgressHUD
@@ -370,10 +387,13 @@ SPEC CHECKSUMS:
   R.swift.Library: fa85ce1e0d0b7e818cd9e080df910ba54d2776cc
   RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
+  RxFirebase: 45e6448c69c7212e21f8ba89144443f916437861
+  RxFirebaseFirestore: edabc5e6b02bd876a323a0e53cb5071356505db2
+  RxFirebaseStorage: 271184ff8f8d3660bfc751dcafdbb4dd01d0b8a1
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: e2dc62b366a3adf6a0be44ba9f405efd4c94e0c4
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
 
-PODFILE CHECKSUM: db194f03246bf0e5dbc17bae37abac356a93b896
+PODFILE CHECKSUM: 8f960e18b2ff23e4c7d3ca8ead00b56e29467b84
 
 COCOAPODS: 1.9.1

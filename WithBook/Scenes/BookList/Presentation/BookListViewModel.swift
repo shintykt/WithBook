@@ -7,53 +7,46 @@
 //
 
 import RxCocoa
+import RxSwift
 
 final class BookListViewModel {
-    private var model: BookList
-    
-    private var books: Driver<[BookListSectionModel]> {
-        return booksRelay.asDriver()
-    }
-    private let booksRelay = BehaviorRelay<[BookListSectionModel]>(value: [])
+    private let model: BookList
+    private let disposeBag = DisposeBag()
         
     init(model: BookList) {
         self.model = model
-        fetchBooks()
-    }
-    
-    func fetchBooks() {
-        model.fetchBooks { [weak self] sectionModels in
-            self?.booksRelay.accept(sectionModels)
-        }
-    }
-    
-    func add(_ item: BookListSectionItem) {
-        model.add(item) { [weak self] sectionModels in
-            self?.booksRelay.accept(sectionModels)
-        }
-    }
-    
-    func replace(_ item: BookListSectionItem) {
-        model.replace(item) { [weak self] sectionModels in
-            self?.booksRelay.accept(sectionModels)
-        }
-    }
-    
-    func remove(_ item: BookListSectionItem) {
-        model.remove(item) { [weak self] sectionModels in
-            self?.booksRelay.accept(sectionModels)
-        }
     }
 }
 
 extension BookListViewModel: ViewModel {
-    struct Input {}
+    struct Input {
+        let viewDidLoad: Driver<Void>
+        let deleteBook: Driver<Book>
+    }
     
     struct Output {
         let books: Driver<[BookListSectionModel]>
+        let deleteResult: Driver<Void>
     }
     
     func transform(input: Input) -> Output {
-        return Output(books: books)
+        let books = input.viewDidLoad
+            .flatMap { [weak self] _ -> Driver<[BookListSectionModel]> in
+                guard let self = self else { return .empty() }
+                return self.model.listenBooks()
+                    .asDriver(onErrorDriveWith: .empty())
+            }
+        
+        let deleteResult = input.deleteBook
+            .flatMap { [weak self] book -> Driver<Void> in
+                guard let self = self else { return .empty() }
+                return self.model.remove(book)
+                    .asDriver(onErrorDriveWith: .empty())
+            }
+        
+        return Output(
+            books: books,
+            deleteResult: deleteResult
+        )
     }
 }

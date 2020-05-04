@@ -13,7 +13,6 @@ protocol MemoEdit {
 }
 
 struct MemoEditModel: MemoEdit {
-    private let user: User = .shared
     private let book: Book
     
     init(book: Book) {

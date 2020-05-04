@@ -6,17 +6,31 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import RxCocoa
+import RxSwift
 
 protocol BookEdit {
-    func validate(_ title: String?) -> Driver<Bool>
+    func validate(_ title: String?) -> Observable<Bool>
+    func add(_ book: Book) -> Observable<Void>
+    func replace(_ book: Book) -> Observable<Void>
 }
 
 struct BookEditModel: BookEdit {
-    private let user: User = .shared
+    private let bookRepository: BookRepository
     
-    func validate(_ title: String?) -> Driver<Bool> {
+    init(bookRepository: BookRepository = .init()) {
+        self.bookRepository = bookRepository
+    }
+    
+    func validate(_ title: String?) -> Observable<Bool> {
         guard let title = title else { return .just(false) }
         return .just(!title.isEmpty)
+    }
+    
+    func add(_ book: Book) -> Observable<Void> {
+        return bookRepository.add(book)
+    }
+    
+    func replace(_ book: Book) -> Observable<Void> {
+        return bookRepository.replace(book)
     }
 }

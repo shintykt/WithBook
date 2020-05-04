@@ -15,58 +15,95 @@ enum BookEditMode {
 }
 
 final class BookEditViewModel {
-    private var model: BookEdit
+    private let model: BookEdit
     private let disposeBag = DisposeBag()
     
-    let mode: BookEditMode
-    let book: Book
+    private var mode: BookEditMode!
+    private var book: Book!
     
-    init(model: BookEdit, mode: BookEditMode) {
+    init(model: BookEdit) {
         self.model = model
-        self.mode = mode
-        switch mode {
-        case .adding: book = Book(title: "")
-        case .replacing(let book): self.book = book
-        }
     }
 }
 
 extension BookEditViewModel: ViewModel {
     struct Input {
+        let mode: Driver<BookEditMode>
         let title: Driver<String>
         let author: Driver<String?>
+        let image: Driver<UIImage>
+        let completeTap: Driver<Void>
     }
     
     struct Output {
+        let book: Driver<Book>
         let canTapComplete: Driver<Bool>
+        let completeResult: Driver<Void>
     }
     
     func transform(input: Input) -> Output {
         input.title
             .drive(onNext: { [weak self] title in
-                self?.book.title = title
+                guard let book = self?.book else { return }
+                book.title = title
             })
             .disposed(by: disposeBag)
         
         input.author
             .drive(onNext: { [weak self] author in
-                self?.book.author = author ?? Const.defaultText
+                guard let book = self?.book else { return }
+                book.author = author ?? Const.defaultText
             })
             .disposed(by: disposeBag)
         
+        input.image
+            .drive(onNext: { [weak self] image in
+                guard let book = self?.book else { return }
+                book.imageData = image.compressedJpegData
+            })
+            .disposed(by: disposeBag)
+        
+        let book = input.mode
+            .map { [weak self] mode -> Book in
+                guard let self = self else { return Book(title: "") }
+                self.mode = mode
+                
+                switch mode {
+                case .adding:
+                    self.book = Book(title: "")
+                case .replacing(let book):
+                    self.book = book
+                }
+                
+                return self.book
+            }
+        
         let canTapComplete = input.title
-            .flatMap { title -> Driver<Bool> in
+            .flatMap {  [weak self] title -> Driver<Bool> in
+                guard let self = self else { return .just(false) }
                 return self.model.validate(title)
+                    .asDriver(onErrorJustReturn: false)
+            }
+        
+        let completeResult = input.completeTap
+            .flatMap { [weak self] _ -> Driver<Void> in
+                guard let self = self else { return .empty() }
+                switch self.mode {
+                case .adding:
+                    return self.model.add(self.book)
+                        .asDriver(onErrorDriveWith: .empty())
+                case .replacing:
+                    return self.model.replace(self.book)
+                        .asDriver(onErrorDriveWith: .empty())
+                case .none:
+                    return .empty()
+                }
             }
         
         return Output(
-            canTapComplete: canTapComplete
+            book: book,
+            canTapComplete: canTapComplete,
+            completeResult: completeResult
         )
-    }
-}
-
-extension BookEditViewModel {
-    func input(_ image: UIImage) {
-        book.imageData = image.compressedJpegData
     }
 }

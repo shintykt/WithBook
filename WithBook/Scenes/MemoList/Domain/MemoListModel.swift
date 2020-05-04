@@ -16,18 +16,19 @@ protocol MemoList {
 }
 
 final class MemoListModel {
-    private let user: User = .shared
+    private let memoRepository: MemoRepository
     private let book: Book
     private var memos: [Memo] = []
     
-    init(book: Book) {
+    init(book: Book, memoRepository: MemoRepository = .init()) {
         self.book = book
+        self.memoRepository = memoRepository
     }
 }
 
 extension MemoListModel: MemoList {
     func fetchMemos(completion: @escaping ([Memo]) -> Void) {
-        user.fetchMemos(about: book) { [weak self] memo in
+        memoRepository.fetchMemos(about: book) { [weak self] memo in
             guard let strongSelf = self else { return }
             strongSelf.memos.append(memo)
             completion(strongSelf.memos)
@@ -35,20 +36,20 @@ extension MemoListModel: MemoList {
     }
     
     func add(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
-        user.add(memo, about: book)
+        memoRepository.add(memo, about: book)
         memos.append(memo)
         completion(memos)
     }
     
     func replace(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
-        user.replace(memo, about: book)
+        memoRepository.replace(memo, about: book)
         guard let targetIndex = memos.firstIndex(where: { $0.id == memo.id }) else { return }
         memos[targetIndex] = memo
         completion(memos)
     }
     
     func remove(_ memo: Memo, completion: @escaping ([Memo]) -> Void) {
-        user.remove(memo, about: book)
+        memoRepository.remove(memo, about: book)
         memos.removeAll(where: { $0.id == memo.id })
         completion(memos)
     }

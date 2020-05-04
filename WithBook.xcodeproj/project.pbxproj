@@ -8,9 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		4F168416242265C6001A9D10 /* SignInViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F168415242265C6001A9D10 /* SignInViewController.storyboard */; };
+		4F582AFB245FD6E20002D53B /* MemoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F582AFA245FD6E20002D53B /* MemoRepository.swift */; };
 		4F8592FA24309743009E383E /* DataExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8592F924309743009E383E /* DataExtension.swift */; };
 		4FCBB66C2430BF4800777477 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCBB66B2430BF4800777477 /* UIImageExtension.swift */; };
-		4FCD6CAA242C682500AC5D36 /* ContentsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD6CA9242C682500AC5D36 /* ContentsRepository.swift */; };
+		4FCD6CAA242C682500AC5D36 /* BookRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD6CA9242C682500AC5D36 /* BookRepository.swift */; };
 		4FFB4AA22422033200468B92 /* BookListSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D78DF240A104200BCA809 /* BookListSectionModel.swift */; };
 		4FFB4AA32422033200468B92 /* MemoEditModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB5B416241CDF5600F0B0BF /* MemoEditModel.swift */; };
 		4FFB4AA42422033200468B92 /* BookEditModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8ED7222404B49E00526921 /* BookEditModel.swift */; };
@@ -25,7 +26,6 @@
 		4FFB4AAD2422033200468B92 /* MemoViewStatusDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F51A86D23F8F8AF00899672 /* MemoViewStatusDelegate.swift */; };
 		4FFB4AAF2422033200468B92 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D78DD2409F3A000BCA809 /* R.generated.swift */; };
 		4FFB4AB02422033200468B92 /* MemoEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F123A4D240C91FB002080D9 /* MemoEditViewController.swift */; };
-		4FFB4AB12422033200468B92 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A9A3423F417DE00FD4CCD /* UserService.swift */; };
 		4FFB4AB22422033200468B92 /* BookListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68D5E9240270840072F338 /* BookListCell.swift */; };
 		4FFB4AB32422033200468B92 /* MemoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4547772414E4B6001C4CB7 /* MemoListViewModel.swift */; };
 		4FFB4AB42422033200468B92 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB4A9A2421E70600468B92 /* UIViewExtension.swift */; };
@@ -65,6 +65,7 @@
 		4F4547772414E4B6001C4CB7 /* MemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoListViewModel.swift; sourceTree = "<group>"; };
 		4F51A86D23F8F8AF00899672 /* MemoViewStatusDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewStatusDelegate.swift; sourceTree = "<group>"; };
 		4F51A86F23F8F8D500899672 /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
+		4F582AFA245FD6E20002D53B /* MemoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoRepository.swift; sourceTree = "<group>"; };
 		4F5A8A82240A6DDF00D38ED4 /* BookListViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BookListViewController.storyboard; sourceTree = "<group>"; };
 		4F5A8A84240A6E0400D38ED4 /* BookListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookListViewController.swift; sourceTree = "<group>"; };
 		4F62F79F23F7D0EB00B03604 /* SignInModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInModel.swift; sourceTree = "<group>"; };
@@ -88,11 +89,10 @@
 		4F9A9A2A23F415B900FD4CCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4F9A9A3023F415FF00FD4CCD /* BookEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookEntity.swift; sourceTree = "<group>"; };
 		4F9A9A3223F4169200FD4CCD /* MemoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEntity.swift; sourceTree = "<group>"; };
-		4F9A9A3423F417DE00FD4CCD /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		4FB5B416241CDF5600F0B0BF /* MemoEditModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditModel.swift; sourceTree = "<group>"; };
 		4FB5B418241CE08B00F0B0BF /* MemoEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditViewModel.swift; sourceTree = "<group>"; };
 		4FCBB66B2430BF4800777477 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
-		4FCD6CA9242C682500AC5D36 /* ContentsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentsRepository.swift; sourceTree = "<group>"; };
+		4FCD6CA9242C682500AC5D36 /* BookRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookRepository.swift; sourceTree = "<group>"; };
 		4FFB4A9A2421E70600468B92 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		4FFB4A9C2421FE6A00468B92 /* DefaultImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DefaultImage.png; sourceTree = "<group>"; };
 		4FFB4AD02422033200468B92 /* WithBook-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WithBook-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +172,24 @@
 			path = Domain;
 			sourceTree = "<group>";
 		};
+		4F582AFE246009910002D53B /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				4F582AFF246009B00002D53B /* Type */,
+				4FFB4AD42422069100468B92 /* Extension */,
+				4F68D6032402ADAD0072F338 /* Environment */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		4F582AFF246009B00002D53B /* Type */ = {
+			isa = PBXGroup;
+			children = (
+				4F1674B72403781A00047A24 /* ViewModel.swift */,
+			);
+			path = Type;
+			sourceTree = "<group>";
+		};
 		4F62F79D23F7C44E00B03604 /* SignIn */ = {
 			isa = PBXGroup;
 			children = (
@@ -206,7 +224,6 @@
 				4F8ED7182404A49900526921 /* BookEdit */,
 				4F62F7AC23F7F7B500B03604 /* MemoList */,
 				4F123A4A240C8DBE002080D9 /* MemoEdit */,
-				4F68D6042402B2C00072F338 /* Utility */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -326,7 +343,6 @@
 			isa = PBXGroup;
 			children = (
 				4F68D6012402AD5F0072F338 /* Const.swift */,
-				4FFB4AD42422069100468B92 /* Extension */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -334,9 +350,8 @@
 		4F68D6042402B2C00072F338 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				4F9A9A3423F417DE00FD4CCD /* UserService.swift */,
-				4FCD6CA9242C682500AC5D36 /* ContentsRepository.swift */,
-				4F1674B72403781A00047A24 /* ViewModel.swift */,
+				4FCD6CA9242C682500AC5D36 /* BookRepository.swift */,
+				4F582AFA245FD6E20002D53B /* MemoRepository.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -400,7 +415,8 @@
 				4F62F7A323F7EF3C00B03604 /* Application */,
 				4F9A9A3623F417E700FD4CCD /* Data */,
 				4F62F7A423F7EF6800B03604 /* Scenes */,
-				4F68D6032402ADAD0072F338 /* Environment */,
+				4F68D6042402B2C00072F338 /* Utility */,
+				4F582AFE246009910002D53B /* Common */,
 				4F68D5FF2402AA090072F338 /* Resources */,
 				4F9A9A2723F415B900FD4CCD /* LaunchScreen.storyboard */,
 				4F9A9A2A23F415B900FD4CCD /* Info.plist */,
@@ -600,13 +616,13 @@
 				4FFB4AA82422033200468B92 /* SignInModel.swift in Sources */,
 				4FFB4AA92422033200468B92 /* BookEntity.swift in Sources */,
 				4FFB4AAA2422033200468B92 /* SignInViewModel.swift in Sources */,
-				4FCD6CAA242C682500AC5D36 /* ContentsRepository.swift in Sources */,
+				4FCD6CAA242C682500AC5D36 /* BookRepository.swift in Sources */,
 				4FFB4AAB2422033200468B92 /* ViewModel.swift in Sources */,
 				4FFB4AAC2422033200468B92 /* MemoEntity.swift in Sources */,
 				4FFB4AAD2422033200468B92 /* MemoViewStatusDelegate.swift in Sources */,
+				4F582AFB245FD6E20002D53B /* MemoRepository.swift in Sources */,
 				4FFB4AAF2422033200468B92 /* R.generated.swift in Sources */,
 				4FFB4AB02422033200468B92 /* MemoEditViewController.swift in Sources */,
-				4FFB4AB12422033200468B92 /* UserService.swift in Sources */,
 				4FFB4AB22422033200468B92 /* BookListCell.swift in Sources */,
 				4FFB4AB32422033200468B92 /* MemoListViewModel.swift in Sources */,
 				4FFB4AB42422033200468B92 /* UIViewExtension.swift in Sources */,

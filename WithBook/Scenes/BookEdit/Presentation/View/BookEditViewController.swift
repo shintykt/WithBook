@@ -10,10 +10,6 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-protocol BookEditDelegate: AnyObject {
-    func didEdit(for mode: BookEditMode, book: Book)
-}
-
 struct BookEditViewControllerFactory {
     private init() {}
     static func create(for mode: BookEditMode) -> BookEditViewController {
@@ -30,10 +26,12 @@ final class BookEditViewController: UIViewController {
     @IBOutlet private weak var selectImageButton: UIButton!
     @IBOutlet private weak var completeButton: UIButton!
     
-    private var viewModel: BookEditViewModel!
+    private let viewModel = BookEditViewModel(model: BookEditModel())
     private let disposeBag = DisposeBag()
     
-    weak var delegate: BookEditDelegate?
+    private var mode: BookEditMode!
+    private let modeRelay = PublishRelay<BookEditMode>()
+    private let imageRelay = PublishRelay<UIImage>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +40,7 @@ final class BookEditViewController: UIViewController {
     }
     
     fileprivate func inject(_ mode: BookEditMode) {
-        viewModel = BookEditViewModel(model: BookEditModel(), mode: mode)
+        self.mode = mode
     }
 }
 
@@ -66,9 +64,7 @@ private extension BookEditViewController {
         
         completeButton.rx.tap
             .subscribe { [weak self] event in
-                guard let strongSelf = self else { return }
-                strongSelf.dismiss(animated: true)
-                strongSelf.delegate?.didEdit(for: strongSelf.viewModel.mode, book: strongSelf.viewModel.book)
+                self?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
@@ -79,23 +75,36 @@ private extension BookEditViewController {
             }
             .disposed(by: disposeBag)
         view.addGestureRecognizer(backgroundTap)
-        
-        guard case .replacing(let book) = viewModel.mode else { return }
-        titleTextField.text = book.title
-        authorTextField.text = book.author
-        imageView.image = book.imageData.image
     }
     
     func setUpViewModel() {
         let input = BookEditViewModel.Input(
+            mode: modeRelay.asDriver(onErrorJustReturn: .adding),
             title: titleTextField.rx.text.orEmpty.asDriver(),
-            author: authorTextField.rx.text.asDriver()
+            author: authorTextField.rx.text.asDriver(),
+            image: imageRelay.asDriver(onErrorJustReturn: Const.defaultImage),
+            completeTap: completeButton.rx.tap.asDriver()
         )
         
         let output = viewModel.transform(input: input)
+        
+        output.book
+            .drive(onNext: { [weak self] book in
+                self?.titleTextField.text = book.title
+                self?.authorTextField.text = book.author
+                self?.imageView.image = book.imageData.image
+            })
+            .disposed(by: disposeBag)
+        
         output.canTapComplete
             .drive(completeButton.rx.isEnabled)
             .disposed(by: disposeBag)
+        
+        output.completeResult
+            .drive() // エラー処理
+            .disposed(by: disposeBag)
+        
+        modeRelay.accept(mode)
     }
 }
 
@@ -113,7 +122,7 @@ extension BookEditViewController: UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[.originalImage] as? UIImage else { return }
         imageView.image = selectedImage
-        viewModel.input(selectedImage)
+        imageRelay.accept(selectedImage)
         dismiss(animated: true)
     }
 }
