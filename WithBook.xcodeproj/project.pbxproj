@@ -9,9 +9,11 @@
 /* Begin PBXBuildFile section */
 		4F168416242265C6001A9D10 /* SignInViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F168415242265C6001A9D10 /* SignInViewController.storyboard */; };
 		4F582AFB245FD6E20002D53B /* MemoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F582AFA245FD6E20002D53B /* MemoRepository.swift */; };
+		4F83356E2460621800D6A089 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83356D2460621800D6A089 /* DateExtension.swift */; };
 		4F8592FA24309743009E383E /* DataExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8592F924309743009E383E /* DataExtension.swift */; };
 		4FCBB66C2430BF4800777477 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCBB66B2430BF4800777477 /* UIImageExtension.swift */; };
 		4FCD6CAA242C682500AC5D36 /* BookRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD6CA9242C682500AC5D36 /* BookRepository.swift */; };
+		4FEC37222460350A00D28CF4 /* FirebaseExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEC37212460350A00D28CF4 /* FirebaseExtension.swift */; };
 		4FFB4AA22422033200468B92 /* BookListSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7D78DF240A104200BCA809 /* BookListSectionModel.swift */; };
 		4FFB4AA32422033200468B92 /* MemoEditModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB5B416241CDF5600F0B0BF /* MemoEditModel.swift */; };
 		4FFB4AA42422033200468B92 /* BookEditModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8ED7222404B49E00526921 /* BookEditModel.swift */; };
@@ -77,6 +79,7 @@
 		4F68D6012402AD5F0072F338 /* Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
 		4F7D78DD2409F3A000BCA809 /* R.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = SOURCE_ROOT; };
 		4F7D78DF240A104200BCA809 /* BookListSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookListSectionModel.swift; sourceTree = "<group>"; };
+		4F83356D2460621800D6A089 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		4F8592F924309743009E383E /* DataExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtension.swift; sourceTree = "<group>"; };
 		4F8ED7192404A4BD00526921 /* BookEditViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BookEditViewController.storyboard; sourceTree = "<group>"; };
 		4F8ED71B2404A4D400526921 /* BookEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookEditViewController.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 		4FB5B418241CE08B00F0B0BF /* MemoEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoEditViewModel.swift; sourceTree = "<group>"; };
 		4FCBB66B2430BF4800777477 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		4FCD6CA9242C682500AC5D36 /* BookRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookRepository.swift; sourceTree = "<group>"; };
+		4FEC37212460350A00D28CF4 /* FirebaseExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseExtension.swift; sourceTree = "<group>"; };
 		4FFB4A9A2421E70600468B92 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		4FFB4A9C2421FE6A00468B92 /* DefaultImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DefaultImage.png; sourceTree = "<group>"; };
 		4FFB4AD02422033200468B92 /* WithBook-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WithBook-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -454,6 +458,8 @@
 			isa = PBXGroup;
 			children = (
 				4F8592F924309743009E383E /* DataExtension.swift */,
+				4F83356D2460621800D6A089 /* DateExtension.swift */,
+				4FEC37212460350A00D28CF4 /* FirebaseExtension.swift */,
 				4FFB4A9A2421E70600468B92 /* UIViewExtension.swift */,
 				4FCBB66B2430BF4800777477 /* UIImageExtension.swift */,
 			);
@@ -608,6 +614,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FFB4AA22422033200468B92 /* BookListSectionModel.swift in Sources */,
+				4FEC37222460350A00D28CF4 /* FirebaseExtension.swift in Sources */,
 				4FFB4AA32422033200468B92 /* MemoEditModel.swift in Sources */,
 				4FFB4AA42422033200468B92 /* BookEditModel.swift in Sources */,
 				4FFB4AA52422033200468B92 /* MemoView.swift in Sources */,
@@ -615,6 +622,7 @@
 				4FFB4AA72422033200468B92 /* BookListModel.swift in Sources */,
 				4FFB4AA82422033200468B92 /* SignInModel.swift in Sources */,
 				4FFB4AA92422033200468B92 /* BookEntity.swift in Sources */,
+				4F83356E2460621800D6A089 /* DateExtension.swift in Sources */,
 				4FFB4AAA2422033200468B92 /* SignInViewModel.swift in Sources */,
 				4FCD6CAA242C682500AC5D36 /* BookRepository.swift in Sources */,
 				4FFB4AAB2422033200468B92 /* ViewModel.swift in Sources */,

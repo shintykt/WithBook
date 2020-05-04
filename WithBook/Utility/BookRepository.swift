@@ -12,30 +12,39 @@ import FirebaseStorage
 import RxFirebase
 import RxSwift
 
-// TODO: 画像CRUD
 final class BookRepository {
     func listenBooks() -> Observable<[Book]> {
         return booksCollection()?.rx.listen()
             .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .observeOn(ConcurrentDispatchQueueScheduler(qos: .background))
             .map { snapshot -> [Book] in
-                return snapshot.documents.map {
-                    return Book(
-                        id: $0.documentID,
-                        title: $0.data()["title"] as! String,
-                        author: $0.data()["author"] as! String
-                    )
-                }
+                return snapshot.documents
+                    .map { try? BookEntity(from: $0) }
+                    .compactMap { $0 }
+                    .map {
+                        return Book(
+                            id: $0.documentId,
+                            createdTime: $0.createdTime.dateValue(),
+                            updatedTime: $0.updatedTime?.dateValue(),
+                            title: $0.title,
+                            author: $0.author,
+                            image: nil
+                        )
+                    }
         } ?? .empty()
     }
     
     func add(_ book: Book) -> Observable<Void> {
         return Observable.create { [weak self] observer in
-            let docData = [
+            let docData: [String: Any] = [
+                "createdTime": Timestamp(date: book.createdTime),
+                "updatedTime": NSNull(),
                 "title": book.title,
-                "author": book.author
+                "author": book.author ?? NSNull(),
+                "imageURL": NSNull()
             ]
             
+            // TODO: "imageURL"処理
             self?.booksCollection()?.document(book.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
@@ -48,11 +57,15 @@ final class BookRepository {
     
     func replace(_ book: Book) -> Observable<Void> {
         return Observable.create { [weak self] observer in
-            let docData = [
+            let docData: [String: Any] = [
+                "createdTime": Timestamp(date: book.createdTime),
+                "updatedTime": Timestamp(date: Date()),
                 "title": book.title,
-                "author": book.author
+                "author": book.author ?? NSNull(),
+                "imageURL": NSNull()
             ]
             
+            // TODO: "imageURL"処理
             self?.booksCollection()?.document(book.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())

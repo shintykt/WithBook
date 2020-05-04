@@ -25,7 +25,7 @@ final class MemoEditViewModel {
         self.model = model
         self.mode = mode
         switch mode {
-        case .adding: memo = Memo(title: "")
+        case .adding: memo = Memo()
         case .replacing(let memo): self.memo = memo
         }
     }
@@ -67,6 +67,6 @@ extension MemoEditViewModel: ViewModel {
 
 extension MemoEditViewModel {
     func input(_ image: UIImage) {
-        memo.imageData = image.compressedJpegData
+        memo.image = image
     }
 }

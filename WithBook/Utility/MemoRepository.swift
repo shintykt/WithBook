@@ -11,7 +11,6 @@ import FirebaseStorage
 import RxFirebase
 import RxSwift
 
-// TODO: 画像のCRUD
 final class MemoRepository {
     private let bookRepository: BookRepository
     
@@ -22,65 +21,57 @@ final class MemoRepository {
     func fetchMemos(about book: Book, completion: @escaping (Memo) -> Void) {
         memosCollection(about: book)?.getDocuments { snapshot, error in
             self.outputIfNeeded(error)
-            snapshot?.documents.forEach {
-                let data = $0.data()
-                let createTimeStamp = data["create_date"] as! Timestamp
-                let updateTimeStamp = data["update_date"] as? Timestamp
-                let memo = Memo(
-                    id: $0.documentID,
-                    createDate: createTimeStamp.dateValue(),
-                    updateDate: updateTimeStamp?.dateValue(),
-                    title: data["title"] as! String,
-                    text: data["text"] as! String
-                )
-                
-                self.memoImagesStorage(about: book)?.child(memo.imageName).getData(maxSize: Const.maxImageSize) { data, error in
-                    self.outputIfNeeded(error)
-                    guard let data = data else { return }
-                    memo.imageData = data
+            snapshot?.documents
+                .map { document -> MemoEntity? in
+                    return try? MemoEntity(from: document)
+                }
+                .compactMap { $0 }
+                .forEach {
+                    let memo = Memo(
+                        id: $0.documentId,
+                        createdTime: $0.createdTime.dateValue(),
+                        updatedTime: $0.updatedTime?.dateValue(),
+                        title: $0.title,
+                        text: $0.text,
+                        image: nil
+                    )
                     completion(memo)
                 }
-            }
         }
     }
     
     func add(_ memo: Memo, about book: Book) {
         let docData: [String: Any] = [
+            "createdTime": Timestamp(date: memo.createdTime),
+            "updatedTime": NSNull(),
             "title": memo.title,
-            "text": memo.text,
-            "create_date": Timestamp(date: memo.createDate),
+            "text": memo.text ?? NSNull(),
+            "imageURL": NSNull()
         ]
+            
+        // TODO: "imageURL"処理
         memosCollection(about: book)?.document(memo.id).setData(docData) { error in
-            self.outputIfNeeded(error)
-        }
-        
-        memoImagesStorage(about: book)?.child(memo.imageName).putData(memo.imageData, metadata: nil) { _, error in
             self.outputIfNeeded(error)
         }
     }
     
     func replace(_ memo: Memo, about book: Book) {
         let docData: [String: Any] = [
+            "createdTime": Timestamp(date: memo.createdTime),
+            "updatedTime": Timestamp(date: Date()),
             "title": memo.title,
-            "text": memo.text,
-            "create_date": Timestamp(date: memo.createDate),
-            "update_date": Timestamp(date: Date())
+            "text": memo.text ?? NSNull(),
+            "imageURL": NSNull()
         ]
-        memosCollection(about: book)?.document(memo.id).setData(docData) { error in
-            self.outputIfNeeded(error)
-        }
         
-        memoImagesStorage(about: book)?.child(memo.imageName).putData(memo.imageData, metadata: nil) { _, error in
+        // TODO: "imageURL"処理
+        memosCollection(about: book)?.document(memo.id).setData(docData) { error in
             self.outputIfNeeded(error)
         }
     }
     
     func remove(_ memo: Memo, about book: Book) {
         memosCollection(about: book)?.document(memo.id).delete { error in
-            self.outputIfNeeded(error)
-        }
-        
-        memoImagesStorage(about: book)?.child(memo.imageName).delete { error in
             self.outputIfNeeded(error)
         }
     }

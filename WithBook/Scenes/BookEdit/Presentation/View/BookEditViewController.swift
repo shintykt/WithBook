@@ -92,7 +92,7 @@ private extension BookEditViewController {
             .drive(onNext: { [weak self] book in
                 self?.titleTextField.text = book.title
                 self?.authorTextField.text = book.author
-                self?.imageView.image = book.imageData.image
+                self?.imageView.image = book.image
             })
             .disposed(by: disposeBag)
         

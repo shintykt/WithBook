@@ -84,7 +84,7 @@ private extension MemoEditViewController {
         guard case .replacing(let memo) = viewModel.mode else { return }
         titleTextField.text = memo.title
         textView.text = memo.text
-        imageView.image = memo.imageData.image
+        imageView.image = memo.image
     }
     
     

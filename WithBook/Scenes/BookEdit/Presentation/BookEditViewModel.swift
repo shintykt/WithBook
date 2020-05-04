@@ -59,18 +59,18 @@ extension BookEditViewModel: ViewModel {
         input.image
             .drive(onNext: { [weak self] image in
                 guard let book = self?.book else { return }
-                book.imageData = image.compressedJpegData
+                book.image = image
             })
             .disposed(by: disposeBag)
         
         let book = input.mode
             .map { [weak self] mode -> Book in
-                guard let self = self else { return Book(title: "") }
+                guard let self = self else { return Book() }
                 self.mode = mode
                 
                 switch mode {
                 case .adding:
-                    self.book = Book(title: "")
+                    self.book = Book()
                 case .replacing(let book):
                     self.book = book
                 }
