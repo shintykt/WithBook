@@ -81,6 +81,7 @@ final class BookRepository {
     
     func remove(_ book: Book) -> Observable<Void> {
         return Observable.create { [weak self] observer in
+            // TODO: "imageURL"処理
             self?.booksCollection()?.document(book.id).delete { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())

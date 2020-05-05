@@ -7,11 +7,9 @@
 //
 
 import RxCocoa
-import RxSwift
 
 final class BookListViewModel {
     private let model: BookList
-    private let disposeBag = DisposeBag()
         
     init(model: BookList) {
         self.model = model

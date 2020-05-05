@@ -18,7 +18,6 @@ final class BookEditViewModel {
     private let model: BookEdit
     private let disposeBag = DisposeBag()
     
-    private var mode: BookEditMode!
     private var book: Book!
     
     init(model: BookEdit) {
@@ -66,7 +65,6 @@ extension BookEditViewModel: ViewModel {
         let book = input.mode
             .map { [weak self] mode -> Book in
                 guard let self = self else { return Book() }
-                self.mode = mode
                 
                 switch mode {
                 case .adding:
@@ -85,18 +83,17 @@ extension BookEditViewModel: ViewModel {
                     .asDriver(onErrorJustReturn: false)
             }
         
-        let completeResult = input.completeTap
-            .flatMap { [weak self] _ -> Driver<Void> in
+        let completeResult = Driver.combineLatest(input.mode, input.completeTap)
+            .flatMap { [weak self] mode, _ -> Driver<Void> in
                 guard let self = self else { return .empty() }
-                switch self.mode {
+                
+                switch mode {
                 case .adding:
                     return self.model.add(self.book)
                         .asDriver(onErrorDriveWith: .empty())
                 case .replacing:
                     return self.model.replace(self.book)
                         .asDriver(onErrorDriveWith: .empty())
-                case .none:
-                    return .empty()
                 }
             }
         

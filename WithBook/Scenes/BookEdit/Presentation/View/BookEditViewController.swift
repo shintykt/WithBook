@@ -30,7 +30,7 @@ final class BookEditViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     private var mode: BookEditMode!
-    private let modeRelay = PublishRelay<BookEditMode>()
+    private lazy var modeRelay = BehaviorRelay<BookEditMode>(value: mode)
     private let imageRelay = PublishRelay<UIImage>()
     
     override func viewDidLoad() {
@@ -59,12 +59,6 @@ private extension BookEditViewController {
         selectImageButton.rx.tap
             .subscribe { [weak self] _ in
                 self?.selectImage()
-            }
-            .disposed(by: disposeBag)
-        
-        completeButton.rx.tap
-            .subscribe { [weak self] event in
-                self?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
@@ -101,10 +95,10 @@ private extension BookEditViewController {
             .disposed(by: disposeBag)
         
         output.completeResult
-            .drive() // エラー処理
+            .drive(onNext: { [weak self] event in
+                self?.dismiss(animated: true)
+            })
             .disposed(by: disposeBag)
-        
-        modeRelay.accept(mode)
     }
 }
 

@@ -9,52 +9,44 @@
 import RxCocoa
 
 final class MemoListViewModel {
-    private var model: MemoList
+    private let model: MemoList
     
-    private var memos: Driver<[Memo]> {
-        return memosRelay.asDriver()
-    }
-    private let memosRelay = BehaviorRelay<[Memo]>(value: [])
-        
     init(model: MemoList) {
         self.model = model
-        fetchMemos()
-    }
-    
-    func fetchMemos() {
-        model.fetchMemos { [weak self] memos in
-            self?.memosRelay.accept(memos)
-        }
-    }
-    
-    func add(_ memo: Memo) {
-        model.add(memo) { [weak self] memos in
-            self?.memosRelay.accept(memos)
-        }
-    }
-    
-    func replace(_ memo: Memo) {
-        model.replace(memo) { [weak self] memos in
-            self?.memosRelay.accept(memos)
-        }
-    }
-    
-    func remove(_ memo: Memo) {
-        model.remove(memo) { [weak self] memos in
-            self?.memosRelay.accept(memos)
-        }
     }
 }
 
 extension MemoListViewModel: ViewModel {
-    struct Input {}
+    struct Input {
+        let viewDidLoad: Driver<Void>
+        let book: Driver<Book>
+        let deleteMemo: Driver<Memo>
+    }
     
     struct Output {
         let memos: Driver<[Memo]>
+        let deleteResult: Driver<Void>
     }
     
     func transform(input: Input) -> Output {
-        return Output(memos: memos)
+        let memos = Driver.combineLatest(input.book, input.viewDidLoad)
+            .flatMap { [weak self] book, _ -> Driver<[Memo]> in
+                guard let self = self else { return .empty() }
+                return self.model.listenMemos(about: book)
+                    .asDriver(onErrorDriveWith: .empty())
+            }
+        
+        let deleteResult = Driver.combineLatest(input.book, input.deleteMemo)
+            .flatMap { [weak self] book, memo -> Driver<Void> in
+                guard let self = self else { return .empty() }
+                return self.model.remove(memo, about: book)
+                    .asDriver(onErrorDriveWith: .empty())
+            }
+        
+        return Output(
+            memos: memos,
+            deleteResult: deleteResult
+        )
     }
 }
 
