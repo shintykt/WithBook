@@ -104,7 +104,7 @@ private extension BookListViewController {
             .disposed(by: disposeBag)
         
         output.books
-            .drive(onNext: { _ in self.collectionView.reloadData() })
+            .drive(onNext: { [weak self] _ in self?.collectionView.reloadData() })
             .disposed(by: disposeBag)
         
         output.deleteResult

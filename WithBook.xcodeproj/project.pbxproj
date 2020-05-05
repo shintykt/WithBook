@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4F168416242265C6001A9D10 /* SignIn.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F168415242265C6001A9D10 /* SignIn.storyboard */; };
+		4F53887424610ED3004F7592 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F53887324610ED3004F7592 /* AuthRepository.swift */; };
 		4F582AFB245FD6E20002D53B /* MemoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F582AFA245FD6E20002D53B /* MemoRepository.swift */; };
 		4F83356E2460621800D6A089 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83356D2460621800D6A089 /* DateExtension.swift */; };
 		4F8592FA24309743009E383E /* DataExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8592F924309743009E383E /* DataExtension.swift */; };
@@ -67,6 +68,7 @@
 		4F4547772414E4B6001C4CB7 /* MemoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoListViewModel.swift; sourceTree = "<group>"; };
 		4F51A86D23F8F8AF00899672 /* MemoViewStatusDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoViewStatusDelegate.swift; sourceTree = "<group>"; };
 		4F51A86F23F8F8D500899672 /* MemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoView.swift; sourceTree = "<group>"; };
+		4F53887324610ED3004F7592 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		4F582AFA245FD6E20002D53B /* MemoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoRepository.swift; sourceTree = "<group>"; };
 		4F5A8A82240A6DDF00D38ED4 /* BookList.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BookList.storyboard; sourceTree = "<group>"; };
 		4F5A8A84240A6E0400D38ED4 /* BookListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookListViewController.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 		4F68D6042402B2C00072F338 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				4F53887324610ED3004F7592 /* AuthRepository.swift */,
 				4FCD6CA9242C682500AC5D36 /* BookRepository.swift */,
 				4F582AFA245FD6E20002D53B /* MemoRepository.swift */,
 			);
@@ -625,6 +628,7 @@
 				4F83356E2460621800D6A089 /* DateExtension.swift in Sources */,
 				4FFB4AAA2422033200468B92 /* SignInViewModel.swift in Sources */,
 				4FCD6CAA242C682500AC5D36 /* BookRepository.swift in Sources */,
+				4F53887424610ED3004F7592 /* AuthRepository.swift in Sources */,
 				4FFB4AAB2422033200468B92 /* ViewModel.swift in Sources */,
 				4FFB4AAC2422033200468B92 /* MemoEntity.swift in Sources */,
 				4FFB4AAD2422033200468B92 /* MemoViewStatusDelegate.swift in Sources */,

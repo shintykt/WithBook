@@ -83,8 +83,9 @@ extension BookEditViewModel: ViewModel {
                     .asDriver(onErrorJustReturn: false)
             }
         
-        let completeResult = Driver.combineLatest(input.mode, input.completeTap)
-            .flatMap { [weak self] mode, _ -> Driver<Void> in
+        let completeResult = input.completeTap
+            .withLatestFrom(input.mode)
+            .flatMap { [weak self] mode -> Driver<Void> in
                 guard let self = self else { return .empty() }
                 
                 switch mode {

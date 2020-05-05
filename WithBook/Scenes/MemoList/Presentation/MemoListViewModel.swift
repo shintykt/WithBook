@@ -8,7 +8,7 @@
 
 import RxCocoa
 
-final class MemoListViewModel {
+struct MemoListViewModel {
     private let model: MemoList
     
     init(model: MemoList) {
@@ -29,16 +29,15 @@ extension MemoListViewModel: ViewModel {
     }
     
     func transform(input: Input) -> Output {
-        let memos = Driver.combineLatest(input.book, input.viewDidLoad)
-            .flatMap { [weak self] book, _ -> Driver<[Memo]> in
-                guard let self = self else { return .empty() }
+        let memos = input.viewDidLoad
+            .withLatestFrom(input.book)
+            .flatMap { book -> Driver<[Memo]> in
                 return self.model.listenMemos(about: book)
                     .asDriver(onErrorDriveWith: .empty())
             }
         
         let deleteResult = Driver.combineLatest(input.book, input.deleteMemo)
-            .flatMap { [weak self] book, memo -> Driver<Void> in
-                guard let self = self else { return .empty() }
+            .flatMap { book, memo -> Driver<Void> in
                 return self.model.remove(memo, about: book)
                     .asDriver(onErrorDriveWith: .empty())
             }

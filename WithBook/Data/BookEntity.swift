@@ -35,7 +35,7 @@ final class Book {
     }
 }
 
-final class BookEntity {
+struct BookEntity {
     let documentId: String
     let createdTime: Timestamp
     let updatedTime: Timestamp?

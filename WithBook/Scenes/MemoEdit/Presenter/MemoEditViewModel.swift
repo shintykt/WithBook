@@ -84,8 +84,9 @@ extension MemoEditViewModel: ViewModel {
                     .asDriver(onErrorJustReturn: false)
             }
 
-        let completeResult = Driver.combineLatest(input.book, input.mode, input.completeTap)
-            .flatMap { [weak self] book, mode, _ -> Driver<Void> in
+        let completeResult = input.completeTap
+            .withLatestFrom(Driver.combineLatest(input.book, input.mode))
+            .flatMap { [weak self] book, mode -> Driver<Void> in
                 guard let self = self else { return .empty() }
                 
                 switch mode {
