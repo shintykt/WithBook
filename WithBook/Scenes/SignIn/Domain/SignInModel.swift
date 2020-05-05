@@ -8,18 +8,26 @@
 
 import RxSwift
 
-// TODO: バリデーションのケースが増えた際にエラーハンドリングで使用
-//enum SignInError: Error {
-//    case invalidIdAndPassword
-//}
-
 protocol SignIn {
-    func validate(_ id: String?, _ password: String?) -> Observable<Bool>
+    func validate(_ email: String?, _ password: String?) -> Observable<Bool>
+    func authorize(_ email: String, _ password: String) -> Observable<Result<Void, AuthError>>
 }
 
-struct SignInModel: SignIn {
-    func validate(_ id: String?, _ password: String?) -> Observable<Bool> {
-        guard let id = id, let password = password else { return .just(false) }
-        return .just(!id.isEmpty && !password.isEmpty)
+struct SignInModel {
+    private let authRepository: Authorization
+    
+    init(authRepository: Authorization = AuthRepository()) {
+        self.authRepository = authRepository
+    }
+}
+
+extension SignInModel: SignIn {
+    func validate(_ email: String?, _ password: String?) -> Observable<Bool> {
+        guard let email = email, let password = password else { return .just(false) }
+        return .just(!email.isEmpty && !password.isEmpty)
+    }
+    
+    func authorize(_ email: String, _ password: String) -> Observable<Result<Void, AuthError>> {
+        return authRepository.authorize(email, password)
     }
 }

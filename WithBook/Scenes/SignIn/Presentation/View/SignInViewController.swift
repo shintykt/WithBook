@@ -10,10 +10,9 @@ import FirebaseAuth
 import RxCocoa
 import RxSwift
 import SVProgressHUD
-import UIKit
 
 final class SignInViewController: UIViewController {
-    @IBOutlet private weak var idTextField: UITextField!
+    @IBOutlet private weak var emailTextField: UITextField!
     @IBOutlet private weak var passwordTextField: UITextField!
     @IBOutlet private weak var signInButton: UIButton!
     
@@ -33,36 +32,8 @@ private extension SignInViewController {
     func setUpUI() {
         title = "ログイン"
         
-        idTextField.delegate = self
-        
+        emailTextField.delegate = self
         passwordTextField.delegate = self
-        
-        signInButton.rx.tap
-            .subscribe { [weak self] _ in
-                SVProgressHUD.show()
-                guard let strongSelf = self else { return }
-                Auth.auth().signIn(
-                    withEmail: strongSelf.idTextField.text!,
-                    password: strongSelf.passwordTextField.text!
-                ) { authResult, error in
-                    defer { SVProgressHUD.dismiss() }
-                    
-                    if let error = error {
-                        print(error)
-                    }
-                    
-                    guard authResult?.user != nil else {
-                        let alert = UIAlertController(title: "メールアドレスまたはパスワードが違います", message: nil, preferredStyle: .alert)
-                        let closeAction = UIAlertAction(title: "閉じる", style: .default)
-                        alert.addAction(closeAction)
-                        strongSelf.present(alert, animated: true)
-                        return
-                    }
-                    let bookListViewController = R.storyboard.bookList().instantiateInitialViewController()!
-                    strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
-                }
-            }
-            .disposed(by: disposeBag)
         
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
@@ -75,13 +46,32 @@ private extension SignInViewController {
     
     func setUpViewModel() {
         let input = SignInViewModel.Input(
-            id: idTextField.rx.text.orEmpty.asDriver(),
-            password: passwordTextField.rx.text.orEmpty.asDriver()
+            email: emailTextField.rx.text.orEmpty.asDriver(),
+            password: passwordTextField.rx.text.orEmpty.asDriver(),
+            signInTap: signInButton.rx.tap.asDriver()
         )
         
         let output = viewModel.transform(input: input)
+        
         output.canTapSignIn
             .drive(signInButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        output.signInResult
+            .drive(onNext: { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success:
+                    let bookListViewController = R.storyboard.bookList().instantiateInitialViewController()!
+                    self.navigationController?.pushViewController(bookListViewController, animated: true)
+                case .failure(.invalidIdAndPassword):
+                    let alert = UIAlertController(title: "メールアドレスまたはパスワードが違います", message: nil, preferredStyle: .alert)
+                    let closeAction = UIAlertAction(title: "閉じる", style: .default)
+                    alert.addAction(closeAction)
+                    self.present(alert, animated: true)
+                }
+            })
             .disposed(by: disposeBag)
     }
 }

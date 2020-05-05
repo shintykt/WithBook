@@ -14,7 +14,7 @@ enum SectionId: String, IdentifiableType {
     case normal
     
     var identity: String {
-        return self.rawValue
+        return rawValue
     }
 }
 

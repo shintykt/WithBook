@@ -8,7 +8,7 @@
 
 import RxCocoa
 
-final class BookListViewModel {
+struct BookListViewModel {
     private let model: BookList
         
     init(model: BookList) {
@@ -29,15 +29,13 @@ extension BookListViewModel: ViewModel {
     
     func transform(input: Input) -> Output {
         let books = input.viewDidLoad
-            .flatMap { [weak self] _ -> Driver<[BookListSectionModel]> in
-                guard let self = self else { return .empty() }
+            .flatMap { _ -> Driver<[BookListSectionModel]> in
                 return self.model.listenBooks()
                     .asDriver(onErrorDriveWith: .empty())
             }
         
         let deleteResult = input.deleteBook
-            .flatMap { [weak self] book -> Driver<Void> in
-                guard let self = self else { return .empty() }
+            .flatMap { book -> Driver<Void> in
                 return self.model.remove(book)
                     .asDriver(onErrorDriveWith: .empty())
             }

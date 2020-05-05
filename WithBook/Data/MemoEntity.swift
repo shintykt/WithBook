@@ -35,7 +35,7 @@ final class Memo {
 }
 
 
-final class MemoEntity {
+struct MemoEntity {
     let documentId: String
     let createdTime: Timestamp
     let updatedTime: Timestamp?

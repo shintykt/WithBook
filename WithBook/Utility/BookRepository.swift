@@ -24,7 +24,15 @@ protocol BookReference {
     func bookImagesStorage() -> StorageReference?
 }
 
-struct BookRepository: BookCRUD {
+struct BookRepository {
+    let authRepository: AuthReference
+    
+    init(authRepository: AuthReference = AuthRepository()) {
+        self.authRepository = authRepository
+    }
+}
+
+extension BookRepository: BookCRUD {
     // ブックを監視(Firestoreで更新がある度に呼び出し)
     func listenBooks() -> Observable<[Book]> {
         return booksCollection()?
@@ -111,23 +119,23 @@ struct BookRepository: BookCRUD {
 
 extension BookRepository: BookReference {
     func booksCollection() -> CollectionReference? {
-        guard let user = Auth.auth().currentUser else { return nil }
-        return Firestore.firestore().collection("users").document(user.uid).collection("books")
+        guard let userId = authRepository.userId else { return nil }
+        return Firestore.firestore().collection("users").document(userId).collection("books")
     }
     
     func bookImagesStorage() -> StorageReference? {
-        guard let user = Auth.auth().currentUser else { return nil }
-        guard let url = storageULR else { return nil }
+        guard let userId = authRepository.userId, let url = storageULR else { return nil }
         let storage = Storage.storage().reference(forURL: url)
-        return storage.child("users").child(user.uid).child("bookImages")
+        return storage.child("users").child(userId).child("bookImages")
     }
 }
 
 private extension BookRepository {
     var storageULR: String? {
-        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") else { return nil }
-        guard let dictionary = NSDictionary(contentsOfFile: path) as? [String : Any] else { return nil }
-        guard let bucket = dictionary["STORAGE_BUCKET"] as? String else { return nil }
+        guard let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+              let dictionary = NSDictionary(contentsOfFile: path) as? [String : Any],
+              let bucket = dictionary["STORAGE_BUCKET"] as? String
+        else { return nil }
         return "gs://" + bucket
     }
 }

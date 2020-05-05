@@ -78,7 +78,8 @@ private extension MemoView {
         transform = createBeforeAnimationTransform()
         
         // アニメーション後
-        UIView.animate(withDuration: 1.0) { 
+        UIView.animate(withDuration: 1.0) { [weak self] in
+            guard let self = self else { return }
             self.alpha = 1.0
             self.center = self.createAfterAnimationCenter()
             self.originalCenter = self.center
@@ -210,7 +211,8 @@ private extension MemoView {
     
     // メモの位置をリセット
     func resetPotion() {
-        UIView.animate(withDuration: Const.animationDuration) {
+        UIView.animate(withDuration: Const.animationDuration) { [weak self] in
+            guard let self = self else { return }
             self.center = self.originalCenter
         }
         delegate?.didResetPosition()

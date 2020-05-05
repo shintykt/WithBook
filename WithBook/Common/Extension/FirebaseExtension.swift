@@ -14,7 +14,7 @@ extension DocumentSnapshot {
             throw NSError(
                 domain: FirestoreErrorDomain,
                 code: FirestoreErrorCode.notFound.rawValue,
-                userInfo: ["path": self.reference.path, "field": field]
+                userInfo: ["path": reference.path, "field": field]
             )
         }
         return value

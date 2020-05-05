@@ -8,7 +8,7 @@
 
 import RxCocoa
 
-final class SignInViewModel {
+struct SignInViewModel {
     private let model: SignIn
     
     init(model: SignIn) {
@@ -18,22 +18,33 @@ final class SignInViewModel {
 
 extension SignInViewModel: ViewModel {
     struct Input {
-        let id: Driver<String>
+        let email: Driver<String>
         let password: Driver<String>
+        let signInTap: Driver<Void>
     }
     
     struct Output {
         let canTapSignIn: Driver<Bool>
+        let signInResult: Driver<Result<Void, AuthError>>
     }
     
     func transform(input: Input) -> Output {
-        let canTapSignIn = Driver
-            .combineLatest(input.id, input.password)
-            .flatMap { (id, password) -> Driver<Bool> in
-                return self.model.validate(id, password)
+        let canTapSignIn = Driver.combineLatest(input.email, input.password)
+            .flatMap { email, password -> Driver<Bool> in
+                return self.model.validate(email, password)
                 .asDriver(onErrorJustReturn: false)
             }
         
-        return Output(canTapSignIn: canTapSignIn)
+        let signInResult = input.signInTap
+            .withLatestFrom(Driver.combineLatest(input.email, input.password))
+            .flatMap { email, password -> Driver<Result<Void, AuthError>> in
+                return self.model.authorize(email, password)
+                    .asDriver(onErrorDriveWith: .empty())
+            }
+        
+        return Output(
+            canTapSignIn: canTapSignIn,
+            signInResult: signInResult
+        )
     }
 }
