@@ -10,7 +10,7 @@
         <!--Book List View Controller-->
         <scene sceneID="gRN-dz-Vxi">
             <objects>
-                <collectionViewController id="0ao-gI-7dC" customClass="BookListViewController" customModule="WithBook" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="0ao-gI-7dC" customClass="BookListViewController" customModule="WithBook_Dev" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="TgV-Hs-Vng">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

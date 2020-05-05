@@ -37,13 +37,9 @@ final class MemoView: UIView {
         id = memo.id
         titleLabel.text = memo.title
         textView.text = memo.text
-        imageView.image = memo.imageData.image
-        
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateStyle = .medium
-        createDateLabel.text = formatter.string(from: memo.createDate)
-        updateDateLabel.text = memo.updateDate != nil ? formatter.string(from: memo.updateDate!) : Const.defaultText
+        imageView.image = memo.image
+        createDateLabel.text = memo.createdTime.string
+        updateDateLabel.text = memo.updatedTime?.string ?? Const.defaultText
     }
     
     required init?(coder aDecoder: NSCoder) {

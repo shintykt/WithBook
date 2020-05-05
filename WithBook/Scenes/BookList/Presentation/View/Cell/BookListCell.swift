@@ -9,9 +9,9 @@
 import UIKit
 
 final class BookListCell: UICollectionViewCell {
-    @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var authorLabel: UILabel!
+    @IBOutlet private weak var imageView: UIImageView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,9 +24,9 @@ final class BookListCell: UICollectionViewCell {
     }
     
     func inject(_ book: Book) {
-        imageView.image = book.imageData.image
         titleLabel.text = book.title
         authorLabel.text = book.author
+        imageView.image = book.image
     }
     
     private func loadNib() {

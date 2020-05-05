@@ -10,14 +10,10 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-protocol MemoEditDelegate: AnyObject {
-    func didEdit(for mode: MemoEditMode, memo: Memo)
-}
-
 struct MemoEditViewControllerFactory {
     private init() {}
     static func create(for book: Book, _ mode: MemoEditMode) -> MemoEditViewController {
-        let viewController = R.storyboard.memoEditViewController().instantiateInitialViewController() as! MemoEditViewController
+        let viewController = R.storyboard.memoEdit().instantiateInitialViewController() as! MemoEditViewController
         viewController.inject(book: book, mode: mode)
         return viewController
     }
@@ -30,10 +26,14 @@ final class MemoEditViewController: UIViewController {
     @IBOutlet private weak var selectImageButton: UIButton!
     @IBOutlet private weak var completeButton: UIButton!
     
-    private var viewModel: MemoEditViewModel!
+    private let viewModel = MemoEditViewModel(model: MemoEditModel())
     private let disposeBag = DisposeBag()
     
-    weak var delegate: MemoEditDelegate?
+    private var book: Book!
+    private var mode: MemoEditMode!
+    private lazy var bookRelay = BehaviorRelay<Book>(value: book)
+    private lazy var modeRelay = BehaviorRelay<MemoEditMode>(value: mode)
+    private let imageRelay = PublishRelay<UIImage>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,8 +42,8 @@ final class MemoEditViewController: UIViewController {
     }
     
     fileprivate func inject(book: Book, mode: MemoEditMode) {
-        let model = MemoEditModel(book: book)
-        viewModel = MemoEditViewModel(model: model, mode: mode)
+        self.book = book
+        self.mode = mode
     }
 }
 
@@ -65,14 +65,6 @@ private extension MemoEditViewController {
             }
             .disposed(by: disposeBag)
         
-        completeButton.rx.tap
-            .subscribe { [weak self] event in
-                guard let strongSelf = self else { return }
-                strongSelf.dismiss(animated: true)
-                strongSelf.delegate?.didEdit(for: strongSelf.viewModel.mode, memo: strongSelf.viewModel.memo)
-            }
-            .disposed(by: disposeBag)
-        
         let backgroundTap = UITapGestureRecognizer()
         backgroundTap.rx.event
             .subscribe { [weak self] _ in
@@ -80,23 +72,37 @@ private extension MemoEditViewController {
             }
             .disposed(by: disposeBag)
         view.addGestureRecognizer(backgroundTap)
-        
-        guard case .replacing(let memo) = viewModel.mode else { return }
-        titleTextField.text = memo.title
-        textView.text = memo.text
-        imageView.image = memo.imageData.image
     }
     
     
     func setUpViewModel() {
         let input = MemoEditViewModel.Input(
+            book: bookRelay.asDriver(onErrorDriveWith: .empty()),
+            mode: modeRelay.asDriver(onErrorJustReturn: .adding),
             title: titleTextField.rx.text.orEmpty.asDriver(),
-            text: textView.rx.text.asDriver()
+            text: textView.rx.text.asDriver(),
+            image: imageRelay.asDriver(onErrorJustReturn: Const.defaultImage),
+            completeTap: completeButton.rx.tap.asDriver()
         )
         
         let output = viewModel.transform(input: input)
+        
+        output.memo
+            .drive(onNext: { [weak self] memo in
+                self?.titleTextField.text = memo.title
+                self?.textView.text = memo.text
+                self?.imageView.image = memo.image
+            })
+            .disposed(by: disposeBag)
+        
         output.canTapComplete
             .drive(completeButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        output.completeResult
+            .drive(onNext: { [weak self] event in
+                self?.dismiss(animated: true)
+            })
             .disposed(by: disposeBag)
     }
 }
@@ -115,7 +121,7 @@ extension MemoEditViewController: UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let selectedImage = info[.originalImage] as? UIImage else { return }
         imageView.image = selectedImage
-        viewModel.input(selectedImage)
+        imageRelay.accept(selectedImage)
         dismiss(animated: true)
     }
 }
