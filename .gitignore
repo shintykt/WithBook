@@ -42,3 +42,7 @@ iOSInjectionProject/
 # GoogleService
 #
 GoogleService-Info.plist
+
+# Others
+#
+.DS_Store
