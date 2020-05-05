@@ -13,7 +13,7 @@ import UIKit
 struct MemoListViewControllerFactory {
     private init() {}
     static func create(for book: Book) -> MemoListViewController {
-        let viewController = R.storyboard.memoListViewController().instantiateInitialViewController() as! MemoListViewController
+        let viewController = R.storyboard.memoList().instantiateInitialViewController() as! MemoListViewController
         viewController.inject(book)
         return viewController
     }

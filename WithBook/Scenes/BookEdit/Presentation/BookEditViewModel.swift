@@ -77,7 +77,7 @@ extension BookEditViewModel: ViewModel {
             }
         
         let canTapComplete = input.title
-            .flatMap {  [weak self] title -> Driver<Bool> in
+            .flatMap { [weak self] title -> Driver<Bool> in
                 guard let self = self else { return .just(false) }
                 return self.model.validate(title)
                     .asDriver(onErrorJustReturn: false)

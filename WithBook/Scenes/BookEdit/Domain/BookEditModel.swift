@@ -14,13 +14,15 @@ protocol BookEdit {
     func replace(_ book: Book) -> Observable<Void>
 }
 
-struct BookEditModel: BookEdit {
-    private let bookRepository: BookRepository
+struct BookEditModel {
+    private let bookRepository: BookCRUD
     
-    init(bookRepository: BookRepository = .init()) {
+    init(bookRepository: BookCRUD = BookRepository()) {
         self.bookRepository = bookRepository
     }
-    
+}
+
+extension BookEditModel: BookEdit {
     func validate(_ title: String?) -> Observable<Bool> {
         guard let title = title else { return .just(false) }
         return .just(!title.isEmpty)

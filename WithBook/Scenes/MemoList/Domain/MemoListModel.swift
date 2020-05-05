@@ -13,10 +13,10 @@ protocol MemoList {
     func remove(_ memo: Memo, about book: Book) -> Observable<Void>
 }
 
-final class MemoListModel {
-    private let memoRepository: MemoRepository
+struct MemoListModel {
+    private let memoRepository: MemoCRUD
     
-    init(memoRepository: MemoRepository = .init()) {
+    init(memoRepository: MemoCRUD = MemoRepository()) {
         self.memoRepository = memoRepository
     }
 }

@@ -6,7 +6,6 @@
 //  Copyright © 2020 Takaya Shinto. All rights reserved.
 //
 
-import RxCocoa
 import RxSwift
 
 // TODO: バリデーションのケースが増えた際にエラーハンドリングで使用
@@ -15,11 +14,11 @@ import RxSwift
 //}
 
 protocol SignIn {
-    func validate(_ id: String?, _ password: String?) -> Driver<Bool>
+    func validate(_ id: String?, _ password: String?) -> Observable<Bool>
 }
 
 struct SignInModel: SignIn {
-    func validate(_ id: String?, _ password: String?) -> Driver<Bool> {
+    func validate(_ id: String?, _ password: String?) -> Observable<Bool> {
         guard let id = id, let password = password else { return .just(false) }
         return .just(!id.isEmpty && !password.isEmpty)
     }

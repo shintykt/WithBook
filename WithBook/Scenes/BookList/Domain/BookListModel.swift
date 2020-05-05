@@ -13,10 +13,10 @@ protocol BookList {
     func remove(_ book: Book) -> Observable<Void>
 }
 
-final class BookListModel {
-    private let bookRepository: BookRepository
+struct BookListModel {
+    private let bookRepository: BookCRUD
     
-    init(bookRepository: BookRepository = .init()) {
+    init(bookRepository: BookCRUD = BookRepository()) {
         self.bookRepository = bookRepository
     }
 }

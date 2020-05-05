@@ -13,7 +13,7 @@ import UIKit
 struct MemoEditViewControllerFactory {
     private init() {}
     static func create(for book: Book, _ mode: MemoEditMode) -> MemoEditViewController {
-        let viewController = R.storyboard.memoEditViewController().instantiateInitialViewController() as! MemoEditViewController
+        let viewController = R.storyboard.memoEdit().instantiateInitialViewController() as! MemoEditViewController
         viewController.inject(book: book, mode: mode)
         return viewController
     }

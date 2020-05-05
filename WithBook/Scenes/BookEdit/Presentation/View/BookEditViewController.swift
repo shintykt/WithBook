@@ -13,7 +13,7 @@ import UIKit
 struct BookEditViewControllerFactory {
     private init() {}
     static func create(for mode: BookEditMode) -> BookEditViewController {
-        let viewController = R.storyboard.bookEditViewController().instantiateInitialViewController() as! BookEditViewController
+        let viewController = R.storyboard.bookEdit().instantiateInitialViewController() as! BookEditViewController
         viewController.inject(mode)
         return viewController
     }

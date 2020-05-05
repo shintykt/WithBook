@@ -12,7 +12,20 @@ import FirebaseStorage
 import RxFirebase
 import RxSwift
 
-final class BookRepository {
+protocol BookCRUD {
+    func listenBooks() -> Observable<[Book]>
+    func add(_ book: Book) -> Observable<Void>
+    func replace(_ book: Book) -> Observable<Void>
+    func remove(_ book: Book) -> Observable<Void>
+}
+
+protocol BookReference {
+    func booksCollection() -> CollectionReference?
+    func bookImagesStorage() -> StorageReference?
+}
+
+struct BookRepository: BookCRUD {
+    // ブックを監視(Firestoreで更新がある度に呼び出し)
     func listenBooks() -> Observable<[Book]> {
         return booksCollection()?
             .order(by: "createdTime", descending: true)
@@ -37,8 +50,9 @@ final class BookRepository {
         } ?? .empty()
     }
     
+    // ブックを追加
     func add(_ book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             let docData: [String: Any] = [
                 "createdTime": Timestamp(date: book.createdTime),
                 "updatedTime": NSNull(),
@@ -48,7 +62,7 @@ final class BookRepository {
             ]
             
             // TODO: "imageURL"処理
-            self?.booksCollection()?.document(book.id).setData(docData) { error in
+            self.booksCollection()?.document(book.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()
@@ -58,8 +72,9 @@ final class BookRepository {
         }
     }
     
+    // ブックを更新
     func replace(_ book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             let docData: [String: Any] = [
                 "createdTime": Timestamp(date: book.createdTime),
                 "updatedTime": Timestamp(date: Date()),
@@ -69,7 +84,7 @@ final class BookRepository {
             ]
             
             // TODO: "imageURL"処理
-            self?.booksCollection()?.document(book.id).setData(docData) { error in
+            self.booksCollection()?.document(book.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()
@@ -79,10 +94,11 @@ final class BookRepository {
         }
     }
     
+    // ブックを削除
     func remove(_ book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             // TODO: "imageURL"処理
-            self?.booksCollection()?.document(book.id).delete { error in
+            self.booksCollection()?.document(book.id).delete { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()
@@ -91,7 +107,9 @@ final class BookRepository {
             return Disposables.create()
         }
     }
-    
+}
+
+extension BookRepository: BookReference {
     func booksCollection() -> CollectionReference? {
         guard let user = Auth.auth().currentUser else { return nil }
         return Firestore.firestore().collection("users").document(user.uid).collection("books")

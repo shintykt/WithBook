@@ -11,13 +11,23 @@ import FirebaseStorage
 import RxFirebase
 import RxSwift
 
-final class MemoRepository {
-    private let bookRepository: BookRepository
+protocol MemoCRUD {
+    func listenMemos(about book: Book) -> Observable<[Memo]>
+    func add(_ memo: Memo, about book: Book) -> Observable<Void>
+    func replace(_ memo: Memo, about book: Book) -> Observable<Void>
+    func remove(_ memo: Memo, about book: Book) -> Observable<Void>
+}
+
+struct MemoRepository {
+    private let bookRepository: BookReference
     
-    init(bookRepository: BookRepository = .init()) {
+    init(bookRepository: BookReference = BookRepository()) {
         self.bookRepository = bookRepository
     }
-    
+}
+
+extension MemoRepository: MemoCRUD {
+    // メモを監視(Firestoreで更新がある度に呼び出し)
     func listenMemos(about book: Book) -> Observable<[Memo]> {
         return memosCollection(about: book)?
             .order(by: "createdTime", descending: false)
@@ -42,8 +52,9 @@ final class MemoRepository {
             } ?? .empty()
     }
     
+    // メモを追加
     func add(_ memo: Memo, about book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             let docData: [String: Any] = [
                 "createdTime": Timestamp(date: memo.createdTime),
                 "updatedTime": NSNull(),
@@ -53,7 +64,7 @@ final class MemoRepository {
             ]
             
             // TODO: "imageURL"処理
-            self?.memosCollection(about: book)?.document(memo.id).setData(docData) { error in
+            self.memosCollection(about: book)?.document(memo.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()
@@ -63,8 +74,9 @@ final class MemoRepository {
         }
     }
     
+    // メモを更新
     func replace(_ memo: Memo, about book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             let docData: [String: Any] = [
                 "createdTime": Timestamp(date: memo.createdTime),
                 "updatedTime": Timestamp(date: Date()),
@@ -74,7 +86,7 @@ final class MemoRepository {
             ]
             
             // TODO: "imageURL"処理
-            self?.memosCollection(about: book)?.document(memo.id).setData(docData) { error in
+            self.memosCollection(about: book)?.document(memo.id).setData(docData) { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()
@@ -84,10 +96,11 @@ final class MemoRepository {
         }
     }
     
+    // メモを削除
     func remove(_ memo: Memo, about book: Book) -> Observable<Void> {
-        return Observable.create { [weak self] observer in
+        return Observable.create { observer in
             // TODO: "imageURL"処理
-            self?.memosCollection(about: book)?.document(memo.id).delete { error in
+            self.memosCollection(about: book)?.document(memo.id).delete { error in
                 if let error = error { observer.onError(error); return }
                 observer.onNext(())
                 observer.onCompleted()

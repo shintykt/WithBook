@@ -14,13 +14,15 @@ protocol MemoEdit {
     func replace(_ memo: Memo, about book: Book) -> Observable<Void>
 }
 
-struct MemoEditModel: MemoEdit {
-    private let memoRepository: MemoRepository
+struct MemoEditModel {
+    private let memoRepository: MemoCRUD
     
-    init(memoRepository: MemoRepository = .init()) {
+    init(memoRepository: MemoCRUD = MemoRepository()) {
         self.memoRepository = memoRepository
     }
-    
+}
+
+extension MemoEditModel: MemoEdit {
     func validate(_ title: String?) -> Observable<Bool> {
         guard let title = title else { return .just(false) }
         return .just(!title.isEmpty)
