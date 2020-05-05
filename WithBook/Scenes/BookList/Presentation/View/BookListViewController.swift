@@ -36,6 +36,8 @@ final class BookListViewController: UICollectionViewController {
     private let viewModel = BookListViewModel(model: BookListModel())
     private let disposeBag = DisposeBag()
     
+    private let deleteBookRelay = PublishRelay<Book>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUI()
@@ -54,7 +56,6 @@ private extension BookListViewController {
         addBarButtonItem.rx.tap
             .subscribe { [weak self] _ in
                 let bookEditViewController = BookEditViewControllerFactory.create(for: .adding)
-                bookEditViewController.delegate = self
                 let navigationController = UINavigationController(rootViewController: bookEditViewController)
                 self?.present(navigationController, animated: true)
             }
@@ -75,12 +76,11 @@ private extension BookListViewController {
                 }
                 let replaceAction = UIAlertAction(title: "ブックを編集する", style: .default) { _ in
                     let bookEditViewController = BookEditViewControllerFactory.create(for: .replacing(item.book))
-                    bookEditViewController.delegate = self
                     let navigationController = UINavigationController(rootViewController: bookEditViewController)
                     self?.present(navigationController, animated: true)
                 }
                 let removeAction = UIAlertAction(title: "ブックを削除する", style: .default) { _ in
-                    self?.viewModel.remove(item)
+                    self?.deleteBookRelay.accept(item.book)
                 }
                 let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel)
                 [memoAction, replaceAction, removeAction, cancelAction].forEach {
@@ -92,14 +92,25 @@ private extension BookListViewController {
     }
     
     func setUpViewModel() {
-        let input = BookListViewModel.Input()
+        let input = BookListViewModel.Input(
+            viewDidLoad: .just(()),
+            deleteBook: deleteBookRelay.asDriver(onErrorDriveWith: .empty())
+        )
         
         let output = viewModel.transform(input: input)
+        
         output.books
             .drive(collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+        
+        output.books
+            .drive(onNext: { _ in self.collectionView.reloadData() })
+            .disposed(by: disposeBag)
+        
+        output.deleteResult
+            .drive()
+            .disposed(by: disposeBag)
     }
-    
 }
 
 // MARK: - リストレイアウト
@@ -115,19 +126,5 @@ extension BookListViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return edgeInsets
-    }
-}
-
-// MARK: - ブック追加・編集
-
-extension BookListViewController: BookEditDelegate {
-    // 追加・編集が終了したらリストを更新
-    func didEdit(for mode: BookEditMode, book: Book) {
-        let item = BookListSectionItem(book: book)
-        switch mode {
-        case .adding: viewModel.add(item)
-        case .replacing: viewModel.replace(item)
-        }
-        collectionView.reloadData()
     }
 }

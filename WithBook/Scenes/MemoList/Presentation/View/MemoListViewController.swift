@@ -13,17 +13,19 @@ import UIKit
 struct MemoListViewControllerFactory {
     private init() {}
     static func create(for book: Book) -> MemoListViewController {
-        let viewController = R.storyboard.memoListViewController().instantiateInitialViewController() as! MemoListViewController
+        let viewController = R.storyboard.memoList().instantiateInitialViewController() as! MemoListViewController
         viewController.inject(book)
         return viewController
     }
 }
 
 final class MemoListViewController: UIViewController {
-    private var viewModel: MemoListViewModel!
+    private let viewModel = MemoListViewModel(model: MemoListModel())
     private let disposeBag = DisposeBag()
     
     private var book: Book!
+    private lazy var bookRelay = BehaviorRelay<Book>(value: book)
+    private let deleteMemoRelay = PublishRelay<Memo>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +34,6 @@ final class MemoListViewController: UIViewController {
     }
     
     fileprivate func inject(_ book: Book) {
-        viewModel = MemoListViewModel(model: MemoListModel(book: book))
         self.book = book
     }
 }
@@ -49,7 +50,6 @@ private extension MemoListViewController {
             .subscribe { [weak self] _ in
                 guard let book = self?.book else { return }
                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .adding)
-                memoEditViewController.delegate = self
                 let navigationController = UINavigationController(rootViewController: memoEditViewController)
                 self?.present(navigationController, animated: true)
             }
@@ -57,9 +57,14 @@ private extension MemoListViewController {
     }
     
     func setUpViewModel() {
-        let input = MemoListViewModel.Input()
+        let input = MemoListViewModel.Input(
+            viewDidLoad: .just(()),
+            book: bookRelay.asDriver(onErrorDriveWith: .empty()),
+            deleteMemo: deleteMemoRelay.asDriver(onErrorDriveWith: .empty())
+        )
         
         let output = viewModel.transform(input: input)
+        
         output.memos
             .drive(onNext: { [weak self] memos in
                 memos.forEach { [weak self] memo in
@@ -75,12 +80,11 @@ private extension MemoListViewController {
                             let replaceAction = UIAlertAction(title: "メモを編集する", style: .default) { _ in
                                 guard let book = self?.book else { return }
                                 let memoEditViewController = MemoEditViewControllerFactory.create(for: book, .replacing(memo))
-                                memoEditViewController.delegate = self
                                 let navigationController = UINavigationController(rootViewController: memoEditViewController)
                                 self?.present(navigationController, animated: true)
                             }
                             let removeAction = UIAlertAction(title: "メモを削除する", style: .default) { _ in
-                                self?.viewModel.remove(memo)
+                                self?.deleteMemoRelay.accept(memo)
                                 memoView.removeFromSuperview()
                             }
                             let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel)
@@ -96,17 +100,9 @@ private extension MemoListViewController {
                 }
             })
             .disposed(by: disposeBag)
-    }
-}
-
-// MARK: - メモ追加・編集
-
-extension MemoListViewController: MemoEditDelegate {
-    // 追加・編集が終了したらリストを更新
-    func didEdit(for mode: MemoEditMode, memo: Memo) {
-        switch mode {
-        case .adding: viewModel.add(memo)
-        case .replacing: viewModel.replace(memo)
-        }
+        
+        output.deleteResult
+            .drive()
+            .disposed(by: disposeBag)
     }
 }

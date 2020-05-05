@@ -7,9 +7,8 @@
 //
 
 import RxCocoa
-import RxSwift
 
-struct SignInViewModel {
+final class SignInViewModel {
     private let model: SignIn
     
     init(model: SignIn) {
@@ -32,6 +31,7 @@ extension SignInViewModel: ViewModel {
             .combineLatest(input.id, input.password)
             .flatMap { (id, password) -> Driver<Bool> in
                 return self.model.validate(id, password)
+                .asDriver(onErrorJustReturn: false)
             }
         
         return Output(canTapSignIn: canTapSignIn)

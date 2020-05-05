@@ -58,7 +58,7 @@ private extension SignInViewController {
                         strongSelf.present(alert, animated: true)
                         return
                     }
-                    let bookListViewController = R.storyboard.bookListViewController().instantiateInitialViewController()!
+                    let bookListViewController = R.storyboard.bookList().instantiateInitialViewController()!
                     strongSelf.navigationController?.pushViewController(bookListViewController, animated: true)
                 }
             }
